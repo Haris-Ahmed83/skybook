@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkyBook — Fly Anywhere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sky:#0A1628;--sky2:#0D2142;--blue:#1A6EFF;--blue2:#0052CC;
+  --gold:#FFB800;--gold2:#FF9500;--white:#FFFFFF;--off:#F0F4FF;
+  --gray:#8896B3;--light:#E8EDF8;--card:#111E35;--card2:#162238;
+  --red:#FF4757;--green:#00C851;--purple:#7C3AED;--teal:#0EA5E9;
+  --border:rgba(255,255,255,0.08);
+  --font-display:'Playfair Display',serif;--font:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--sky);color:var(--white);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--sky)}
+::-webkit-scrollbar-thumb{background:var(--blue);border-radius:3px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:70px;background:rgba(10,22,40,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),var(--gold));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.logo-text{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--white)}
+.logo-text span{color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-link{padding:8px 14px;border-radius:8px;color:var(--gray);text-decoration:none;font-size:14px;font-weight:500;transition:all 0.2s;cursor:pointer;border:none;background:none;}
+.nav-link:hover,.nav-link.active{color:var(--white);background:rgba(255,255,255,0.06)}
+.nav-btn{padding:9px 20px;border-radius:8px;border:none;cursor:pointer;font-family:var(--font);font-size:14px;font-weight:600;background:linear-gradient(135deg,var(--blue),var(--blue2));color:var(--white);transition:all 0.2s;}
+.nav-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(26,110,255,0.4)}
+.nav-btn.outline{background:transparent;border:1px solid var(--border);color:var(--gray)}
+.nav-btn.outline:hover{border-color:var(--blue);color:var(--white);box-shadow:none}
+.notif-badge{position:relative}
+.notif-dot{position:absolute;top:-4px;right:-4px;width:8px;height:8px;background:var(--red);border-radius:50%;display:none}
+.notif-dot.show{display:block}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:pointer;border:2px solid var(--border);}
+
+/* PAGES */
+.page{display:none;min-height:100vh;padding-top:70px}
+.page.active{display:block}
+
+/* HERO */
+#home{background:radial-gradient(ellipse at 20% 50%,rgba(26,110,255,0.15) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(255,184,0,0.08) 0%,transparent 50%),var(--sky);position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231A6EFF' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+.hero{position:relative;max-width:1200px;margin:0 auto;padding:70px 40px 50px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(26,110,255,0.15);border:1px solid rgba(26,110,255,0.3);border-radius:100px;padding:6px 16px;font-size:13px;color:var(--blue);margin-bottom:24px;}
+h1.hero-title{font-family:var(--font-display);font-size:clamp(38px,5.5vw,68px);font-weight:900;line-height:1.1;margin-bottom:20px;}
+h1.hero-title span{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{font-size:18px;color:var(--gray);max-width:500px;line-height:1.6;margin-bottom:40px}
+
+/* SEARCH BOX */
+.search-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:50px;box-shadow:0 40px 80px rgba(0,0,0,0.4);}
+.trip-tabs{display:flex;gap:8px;margin-bottom:24px}
+.trip-tab{padding:8px 20px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--gray);font-family:var(--font);font-size:14px;cursor:pointer;transition:all 0.2s;}
+.trip-tab.active{background:var(--blue);border-color:var(--blue);color:var(--white)}
+.search-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr auto;gap:12px;align-items:end}
+.search-field{display:flex;flex-direction:column;gap:6px;position:relative}
+.search-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--gray);font-weight:600}
+.search-input{background:var(--sky2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--white);font-family:var(--font);font-size:15px;outline:none;transition:border-color 0.2s;width:100%;}
+.search-input:focus{border-color:var(--blue)}
+.search-input::placeholder{color:var(--gray)}
+.search-btn{padding:13px 28px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--blue),var(--blue2));color:var(--white);font-family:var(--font);font-size:15px;font-weight:600;transition:all 0.2s;white-space:nowrap;}
+.search-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(26,110,255,0.5)}
+.pax-controls{display:flex;align-items:center;gap:8px}
+.pax-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--sky2);color:var(--white);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.pax-btn:hover{border-color:var(--blue);background:rgba(26,110,255,0.2)}
+.swap-btn{position:absolute;left:50%;top:50%;transform:translate(-50%,30%);width:32px;height:32px;border-radius:50%;background:var(--blue);border:none;color:var(--white);cursor:pointer;font-size:14px;z-index:2;display:flex;align-items:center;justify-content:center;transition:transform 0.3s;}
+.swap-btn:hover{transform:translate(-50%,30%) rotate(180deg)}
+
+/* AUTOCOMPLETE */
+.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:var(--card2);border:1px solid var(--border);border-radius:10px;z-index:100;margin-top:4px;max-height:220px;overflow-y:auto;display:none;}
+.autocomplete-list.open{display:block}
+.autocomplete-item{padding:10px 14px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:10px;transition:background 0.15s;}
+.autocomplete-item:hover{background:rgba(26,110,255,0.1)}
+.auto-code{font-weight:700;color:var(--blue);min-width:36px;font-size:13px}
+.auto-city{color:var(--white)}
+.auto-country{color:var(--gray);font-size:12px;margin-left:auto}
+
+/* STATS */
+.stats{display:flex;gap:48px;margin-bottom:0;flex-wrap:wrap}
+.stat-num{font-family:var(--font-display);font-size:30px;font-weight:700;color:var(--white)}
+.stat-num span{color:var(--gold)}
+.stat-label{font-size:13px;color:var(--gray);margin-top:2px}
+
+/* TICKER */
+.ticker-wrap{background:rgba(26,110,255,0.08);border-top:1px solid rgba(26,110,255,0.15);border-bottom:1px solid rgba(26,110,255,0.15);padding:10px 0;overflow:hidden;}
+.ticker{display:flex;gap:60px;white-space:nowrap;animation:ticker-scroll 40s linear infinite;}
+.ticker-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray)}
+.ticker-item .route{color:var(--white);font-weight:600}
+.ticker-item .price{color:var(--gold);font-weight:700}
+@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* SECTION */
+.section{max-width:1200px;margin:0 auto;padding:60px 40px}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+.section-title{font-family:var(--font-display);font-size:32px;font-weight:700}
+.section-title span{color:var(--gold)}
+.see-all{color:var(--blue);font-size:14px;cursor:pointer;text-decoration:none;font-weight:500;padding:8px 16px;border:1px solid rgba(26,110,255,0.3);border-radius:8px;transition:all 0.2s;}
+.see-all:hover{background:rgba(26,110,255,0.1)}
+
+/* ROUTE CARDS */
+.routes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.route-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:all 0.3s;position:relative;}
+.route-card:hover{transform:translateY(-6px);border-color:rgba(26,110,255,0.4);box-shadow:0 20px 50px rgba(0,0,0,0.4)}
+.route-img{height:150px;background:linear-gradient(135deg,#1a3a5c,#0d2142);display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;overflow:hidden;}
+.route-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(17,30,53,0.8))}
+.route-img-overlay{position:absolute;bottom:10px;left:12px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.9);z-index:1;}
+.route-card-body{padding:16px}
+.route-cities{font-size:17px;font-weight:700;margin-bottom:4px}
+.route-info{font-size:13px;color:var(--gray);margin-bottom:12px;display:flex;gap:12px}
+.route-info span{display:flex;align-items:center;gap:4px}
+.route-price{display:flex;align-items:center;justify-content:space-between;}
+.price-from{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px}
+.price-amount{font-size:22px;font-weight:700;color:var(--gold)}
+.price-tag{font-size:12px;color:var(--green);background:rgba(0,200,81,0.1);padding:3px 10px;border-radius:100px}
+
+/* DEAL CARDS */
+.deals-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.deal-card{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:16px;padding:20px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;}
+.deal-card::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:rgba(26,110,255,0.08);border-radius:50%;}
+.deal-card:hover{transform:translateY(-4px);border-color:rgba(255,184,0,0.3);box-shadow:0 16px 40px rgba(0,0,0,0.3)}
+.deal-badge{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:10px;}
+.deal-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.deal-route{font-size:13px;color:var(--gray);margin-bottom:12px}
+.deal-price{font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px}
+.deal-code{font-size:12px;color:var(--blue);font-family:monospace;background:rgba(26,110,255,0.1);padding:2px 8px;border-radius:4px;}
+.deal-expires{font-size:11px;color:var(--gray);margin-top:6px}
+
+/* FEATURES */
+.features{background:var(--card2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.features-inner{max-width:1200px;margin:0 auto;padding:60px 40px}
+.features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.feature-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;cursor:pointer;transition:all 0.3s;text-align:left;}
+.feature-card:hover{border-color:rgba(26,110,255,0.4);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,0.3)}
+.feature-icon{font-size:28px;margin-bottom:14px;display:block}
+.feature-title{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--white)}
+.feature-desc{font-size:13px;color:var(--gray);line-height:1.6}
+.feature-more{font-size:12px;color:var(--blue);margin-top:10px;cursor:pointer}
+
+/* FLIGHT MAP */
+.map-section{background:var(--card2);padding:60px 40px;border-top:1px solid var(--border)}
+.map-inner{max-width:1200px;margin:0 auto}
+.route-map{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:30px;margin-top:30px;position:relative;overflow:hidden;min-height:260px;display:flex;align-items:center;justify-content:center;}
+.map-svg{width:100%;max-width:700px}
+
+/* TESTIMONIALS */
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.testimonial-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;transition:all 0.3s;}
+.testimonial-card:hover{transform:translateY(-3px);border-color:rgba(26,110,255,0.2)}
+.stars{color:var(--gold);font-size:14px;margin-bottom:10px}
+.testimonial-text{font-size:14px;color:var(--gray);line-height:1.7;margin-bottom:16px;font-style:italic;}
+.testimonial-author{display:flex;align-items:center;gap:10px}
+.author-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;}
+.author-name{font-size:14px;font-weight:600}
+.author-route{font-size:12px;color:var(--gray)}
+
+/* AIRLINES STRIP */
+.airlines-strip{display:flex;gap:20px;overflow-x:auto;padding:10px 0;scrollbar-width:none}
+.airlines-strip::-webkit-scrollbar{display:none}
+.airline-chip{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.2s;white-space:nowrap;flex-shrink:0;}
+.airline-chip:hover{border-color:var(--blue);background:rgba(26,110,255,0.05)}
+.airline-chip-rating{font-size:11px;color:var(--gold)}
+
+/* FLIGHTS PAGE */
+#flights-page{background:var(--sky)}
+.flights-header{background:linear-gradient(135deg,var(--sky2),var(--card));padding:24px 40px;border-bottom:1px solid var(--border);}
+.flights-header-inner{max-width:1200px;margin:0 auto}
+.search-summary{display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.route-pill{display:flex;align-items:center;gap:8px;background:rgba(26,110,255,0.15);border:1px solid rgba(26,110,255,0.2);border-radius:100px;padding:8px 20px;font-size:15px;font-weight:600;}
+.search-mini{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end}
+.flights-body{max-width:1200px;margin:0 auto;padding:24px 40px;display:grid;grid-template-columns:260px 1fr;gap:20px}
+.filters-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;height:fit-content;position:sticky;top:90px;}
+.filter-title{font-size:16px;font-weight:600;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.filter-reset{font-size:12px;color:var(--blue);cursor:pointer}
+.filter-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.filter-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.filter-label{font-size:12px;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray);margin-bottom:10px;font-weight:600}
+.filter-options{display:flex;flex-direction:column;gap:8px}
+.filter-option{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;color:var(--gray);transition:color 0.2s}
+.filter-option:hover{color:var(--white)}
+.filter-option input{accent-color:var(--blue)}
+.price-range{width:100%;accent-color:var(--blue)}
+.price-display{display:flex;justify-content:space-between;font-size:13px;color:var(--gray);margin-top:6px}
+.sort-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.sort-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--gray);font-family:var(--font);font-size:13px;cursor:pointer;transition:all 0.2s;}
+.sort-btn.active{background:rgba(26,110,255,0.15);border-color:var(--blue);color:var(--white)}
+.flights-list{display:flex;flex-direction:column;gap:12px}
+
+/* FLIGHT CARD */
+.flight-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 22px;transition:all 0.25s;cursor:pointer;}
+.flight-card:hover{border-color:rgba(26,110,255,0.4);box-shadow:0 8px 30px rgba(0,0,0,0.3)}
+.flight-card.selected{border-color:var(--blue);background:rgba(26,110,255,0.06)}
+.flight-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.airline-info{display:flex;align-items:center;gap:10px}
+.airline-logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--blue2));display:flex;align-items:center;justify-content:center;font-size:16px;}
+.airline-name{font-weight:600;font-size:15px}
+.airline-num{font-size:12px;color:var(--gray)}
+.flight-tags{display:flex;gap:6px}
+.flight-tag{font-size:11px;padding:3px 8px;border-radius:100px;font-weight:600}
+.tag-class{background:rgba(26,110,255,0.15);color:var(--blue)}
+.tag-refund{background:rgba(0,200,81,0.12);color:var(--green)}
+.tag-wifi{background:rgba(124,58,237,0.15);color:#a78bfa}
+.tag-meal{background:rgba(255,184,0,0.1);color:var(--gold)}
+.flight-middle{display:flex;align-items:center;gap:0}
+.route-time{text-align:center}
+.route-time .time{font-size:22px;font-weight:700}
+.route-time .iata{font-size:12px;color:var(--gray);margin-top:2px}
+.route-line{flex:1;display:flex;flex-direction:column;align-items:center;padding:0 14px}
+.route-duration{font-size:12px;color:var(--gray);margin-bottom:6px}
+.route-bar{width:100%;height:1px;background:var(--border);position:relative}
+.route-bar::before,.route-bar::after{content:'';position:absolute;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:var(--gray)}
+.route-bar::before{left:0}
+.route-bar::after{right:0}
+.route-plane{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:14px}
+.route-stops{font-size:11px;color:var(--gray);margin-top:6px;text-align:center}
+.route-stops.nonstop{color:var(--green)}
+.flight-right{display:flex;align-items:center;gap:20px}
+.flight-price-section{text-align:right}
+.flight-price{font-size:24px;font-weight:700;color:var(--white)}
+.flight-price-sub{font-size:12px;color:var(--gray)}
+.book-flight-btn{margin-top:8px;padding:9px 20px;border-radius:8px;background:var(--blue);border:none;color:var(--white);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.book-flight-btn:hover{background:var(--blue2);transform:translateY(-1px)}
+.flight-details-row{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:none;grid-template-columns:repeat(4,1fr);gap:12px;}
+.flight-details-row.open{display:grid}
+.fd-item{font-size:12px;color:var(--gray)}
+.fd-item strong{color:var(--white);display:block;font-size:13px;margin-bottom:2px}
+.expand-btn{background:none;border:none;color:var(--gray);cursor:pointer;font-size:12px;display:flex;align-items:center;gap:4px;transition:color 0.2s;margin-top:12px;}
+.expand-btn:hover{color:var(--blue)}
+.seats-left{font-size:11px;color:var(--red);background:rgba(255,71,87,0.1);padding:2px 8px;border-radius:100px;}
+.on-time{font-size:11px;color:var(--green)}
+
+/* BOOKING PAGE */
+#booking-page{background:var(--sky)}
+.booking-layout{max-width:1100px;margin:0 auto;padding:28px 40px;display:grid;grid-template-columns:1fr 340px;gap:24px}
+.booking-form-section{display:flex;flex-direction:column;gap:18px}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;}
+.form-card-title{font-size:17px;font-weight:600;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.step-num{width:28px;height:28px;border-radius:8px;background:rgba(26,110,255,0.2);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:12px;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray);font-weight:600}
+.form-input,.form-select{background:var(--sky2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--white);font-family:var(--font);font-size:14px;outline:none;transition:border-color 0.2s;width:100%;}
+.form-input:focus,.form-select:focus{border-color:var(--blue)}
+.form-select{appearance:none;cursor:pointer}
+
+/* SEATS */
+.seats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:4px}
+.seat{aspect-ratio:1;border-radius:6px;border:1px solid var(--border);background:var(--sky2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--gray);transition:all 0.15s;}
+.seat:hover:not(.taken):not(.selected){background:rgba(26,110,255,0.2);border-color:var(--blue);color:var(--white)}
+.seat.taken{background:rgba(255,71,87,0.15);border-color:rgba(255,71,87,0.3);color:var(--red);cursor:not-allowed}
+.seat.selected{background:var(--blue);border-color:var(--blue);color:var(--white)}
+.seat.premium{background:rgba(255,184,0,0.1);border-color:rgba(255,184,0,0.3);color:var(--gold)}
+.seat.premium:hover:not(.taken){background:rgba(255,184,0,0.25)}
+.seat-legend{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray)}
+.legend-dot{width:10px;height:10px;border-radius:3px}
+.seat-section-label{grid-column:1/-1;font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px;padding:4px 0 2px}
+
+/* EXTRAS */
+.extras-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.extra-item{background:var(--sky2);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;position:relative;}
+.extra-item:hover,.extra-item.active{border-color:var(--blue);background:rgba(26,110,255,0.08)}
+.extra-item.active::after{content:'✓';position:absolute;top:8px;right:10px;width:20px;height:20px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff}
+.extra-icon{font-size:20px;margin-bottom:6px}
+.extra-name{font-size:13px;font-weight:600}
+.extra-price{font-size:12px;color:var(--gold);margin-top:2px}
+.extra-desc{font-size:11px;color:var(--gray);margin-top:2px}
+
+/* PAYMENT */
+.payment-methods{display:flex;flex-direction:column;gap:10px}
+.pay-method{background:var(--sky2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.2s;}
+.pay-method:hover,.pay-method.active{border-color:var(--blue);background:rgba(26,110,255,0.06)}
+.pay-method-icon{font-size:20px;min-width:30px;text-align:center}
+.pay-method-name{font-size:14px;font-weight:600}
+.pay-method-desc{font-size:12px;color:var(--gray)}
+.card-fields{margin-top:14px;display:none;gap:12px;flex-direction:column}
+.card-fields.show{display:flex}
+.card-icons{display:flex;gap:8px;margin-top:8px}
+.card-icon{padding:4px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--gray)}
+
+/* COUPON */
+.coupon-row{display:flex;gap:10px;margin-top:14px}
+.coupon-input{flex:1;background:var(--sky2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--white);font-family:var(--font);font-size:14px;outline:none;}
+.coupon-input:focus{border-color:var(--blue)}
+.coupon-btn{padding:11px 18px;border-radius:10px;border:none;cursor:pointer;background:rgba(26,110,255,0.2);color:var(--blue);font-family:var(--font);font-size:14px;font-weight:600;transition:all 0.2s;}
+.coupon-btn:hover{background:var(--blue);color:var(--white)}
+.coupon-success{font-size:13px;color:var(--green);margin-top:6px;display:none}
+
+/* BOOKING SUMMARY */
+.booking-summary{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;height:fit-content;position:sticky;top:90px;}
+.summary-title{font-size:16px;font-weight:700;margin-bottom:18px}
+.summary-flight{background:var(--sky2);border-radius:12px;padding:14px;margin-bottom:14px;}
+.summary-route{font-size:18px;font-weight:700;margin-bottom:4px}
+.summary-details{font-size:13px;color:var(--gray);line-height:1.6}
+.summary-line{display:flex;justify-content:space-between;font-size:14px;margin-bottom:10px}
+.summary-line.total{font-size:17px;font-weight:700;padding-top:12px;border-top:1px solid var(--border);margin-top:4px;}
+.summary-line .label{color:var(--gray)}
+.summary-line.total .label{color:var(--white)}
+.summary-line .discount{color:var(--green)}
+.pay-btn{width:100%;padding:15px;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--blue),var(--blue2));color:var(--white);font-family:var(--font);font-size:16px;font-weight:700;transition:all 0.2s;margin-top:14px;}
+.pay-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(26,110,255,0.5)}
+.secure-note{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--gray);margin-top:10px}
+.miles-preview{background:rgba(255,184,0,0.08);border:1px solid rgba(255,184,0,0.2);border-radius:10px;padding:10px 14px;font-size:13px;margin-top:12px;color:var(--gold);}
+
+/* TICKET PAGE */
+#ticket-page{background:var(--sky)}
+.ticket-wrapper{max-width:720px;margin:0 auto;padding:40px}
+.ticket{background:var(--card2);border:1px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.5);}
+.ticket-header{background:linear-gradient(135deg,var(--blue),#0D3B8E);padding:26px 30px;display:flex;justify-content:space-between;align-items:center;}
+.ticket-airline{font-size:22px;font-weight:700;font-family:var(--font-display)}
+.ticket-number{font-size:12px;opacity:0.7;margin-top:3px}
+.ticket-status{background:rgba(255,255,255,0.2);border-radius:100px;padding:5px 14px;font-size:13px;font-weight:600;}
+.ticket-route{padding:24px 30px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;border-bottom:1px dashed var(--border);}
+.ticket-airport{text-align:center}
+.airport-code{font-size:40px;font-weight:900;font-family:var(--font-display);line-height:1}
+.airport-city{font-size:13px;color:var(--gray);margin-top:4px}
+.airport-time{font-size:22px;font-weight:700;margin-top:8px}
+.airport-date{font-size:12px;color:var(--gray);margin-top:2px}
+.ticket-flight-line{text-align:center}
+.flight-path{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.path-dot{width:8px;height:8px;border-radius:50%;background:var(--blue)}
+.path-line{height:1px;width:60px;background:rgba(26,110,255,0.4)}
+.path-plane{font-size:20px}
+.ticket-duration{font-size:13px;color:var(--gray)}
+.ticket-stops-label{font-size:12px;color:var(--green)}
+.ticket-details{padding:20px 30px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;border-bottom:1px dashed var(--border);}
+.td-item .td-label{font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--gray);margin-bottom:4px}
+.td-item .td-val{font-size:15px;font-weight:600}
+.ticket-qr{padding:20px 30px;display:flex;justify-content:space-between;align-items:center;}
+.qr-code{width:90px;height:90px;background:var(--white);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#333;text-align:center;padding:6px}
+.qr-info{font-size:12px;color:var(--gray);max-width:350px;line-height:1.6}
+.ticket-actions{padding:20px 30px;background:var(--sky2);display:flex;gap:12px;border-top:1px solid var(--border);}
+.ticket-btn{flex:1;padding:12px;border-radius:10px;border:none;cursor:pointer;font-family:var(--font);font-size:14px;font-weight:600;transition:all 0.2s;}
+.ticket-btn.primary{background:var(--blue);color:var(--white)}
+.ticket-btn.secondary{background:var(--card);color:var(--white);border:1px solid var(--border)}
+.ticket-btn:hover{transform:translateY(-1px)}
+
+/* DASHBOARD */
+#dashboard-page{background:var(--sky)}
+.dash-layout{max-width:1100px;margin:0 auto;padding:28px 40px}
+.dash-header{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;}
+.dash-user{display:flex;align-items:center;gap:18px}
+.dash-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;}
+.dash-name{font-size:24px;font-weight:700;margin-bottom:4px}
+.dash-email{font-size:14px;color:var(--gray)}
+.dash-tier{display:inline-flex;align-items:center;gap:6px;background:rgba(255,184,0,0.1);border:1px solid rgba(255,184,0,0.3);border-radius:100px;padding:4px 14px;font-size:13px;color:var(--gold);margin-top:8px;}
+.dash-miles-box{text-align:right}
+.dash-miles-num{font-size:36px;font-weight:700;color:var(--gold);font-family:var(--font-display)}
+.dash-miles-label{font-size:13px;color:var(--gray)}
+.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.dash-stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;transition:all 0.2s;cursor:pointer;}
+.dash-stat:hover{transform:translateY(-2px);border-color:rgba(26,110,255,0.3)}
+.dash-stat-icon{font-size:22px;margin-bottom:8px}
+.dash-stat-num{font-size:24px;font-weight:700;color:var(--white)}
+.dash-stat-label{font-size:13px;color:var(--gray);margin-top:2px}
+.dash-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:20px;}
+.dash-section-title{font-size:17px;font-weight:600;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+.booking-row{display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr 1fr auto;gap:10px;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.booking-row:last-child{border-bottom:none}
+.booking-row-header{color:var(--gray);font-size:12px;text-transform:uppercase;letter-spacing:0.5px;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:4px;}
+.booking-route{font-weight:600;font-size:15px}
+.booking-pnr{font-size:11px;color:var(--gray);font-family:monospace}
+.status-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;text-transform:capitalize;}
+.status-badge.confirmed{background:rgba(0,200,81,0.12);color:var(--green)}
+.status-badge.pending{background:rgba(255,184,0,0.12);color:var(--gold)}
+.status-badge.cancelled{background:rgba(255,71,87,0.12);color:var(--red)}
+.cancel-booking-btn{padding:5px 12px;border-radius:6px;border:1px solid rgba(255,71,87,0.3);background:transparent;color:var(--red);font-size:12px;cursor:pointer;transition:all 0.2s;}
+.cancel-booking-btn:hover{background:rgba(255,71,87,0.1)}
+.miles-progress{background:var(--sky2);border-radius:12px;height:8px;margin-top:8px;overflow:hidden}
+.miles-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:12px;transition:width 0.8s ease;}
+.reward-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+.reward-item{background:var(--sky2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.reward-item:hover:not(.locked){border-color:var(--gold);background:rgba(255,184,0,0.05)}
+.reward-item.locked{opacity:0.5;cursor:not-allowed}
+.reward-icon{font-size:22px;margin-bottom:6px}
+.reward-name{font-size:13px;font-weight:600}
+.reward-cost{font-size:12px;color:var(--gold);margin-top:2px}
+.notif-list{display:flex;flex-direction:column;gap:10px}
+.notif-item{background:var(--sky2);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;gap:12px;align-items:flex-start;transition:all 0.2s;}
+.notif-item.unread{border-color:rgba(26,110,255,0.3);background:rgba(26,110,255,0.05)}
+.notif-icon{font-size:20px;min-width:28px}
+.notif-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.notif-msg{font-size:13px;color:var(--gray);line-height:1.5}
+.notif-time{font-size:11px;color:var(--gray);margin-top:4px}
+.dash-tabs{display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:12px;}
+.dash-tab{padding:8px 18px;border-radius:8px;border:none;background:transparent;color:var(--gray);font-family:var(--font);font-size:14px;cursor:pointer;transition:all 0.2s;}
+.dash-tab.active{background:rgba(26,110,255,0.15);color:var(--white)}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity 0.2s;}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--card2);border:1px solid var(--border);border-radius:20px;width:100%;max-width:440px;overflow:hidden;transform:translateY(20px);transition:transform 0.2s;}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{padding:24px 28px 0;display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:22px;font-weight:700;font-family:var(--font-display)}
+.modal-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--gray);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.modal-close:hover{background:rgba(255,255,255,0.06);color:var(--white)}
+.modal-body{padding:24px 28px 28px}
+.modal-field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.modal-label{font-size:12px;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray);font-weight:600}
+.modal-input{background:var(--sky2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--white);font-family:var(--font);font-size:14px;outline:none;transition:border-color 0.2s;width:100%;}
+.modal-input:focus{border-color:var(--blue)}
+.modal-btn{width:100%;padding:14px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--blue),var(--blue2));color:var(--white);font-family:var(--font);font-size:15px;font-weight:600;transition:all 0.2s;margin-top:6px;}
+.modal-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,110,255,0.4)}
+.modal-footer{text-align:center;font-size:14px;color:var(--gray);margin-top:16px}
+.modal-footer a{color:var(--blue);cursor:pointer;text-decoration:none}
+.modal-footer a:hover{text-decoration:underline}
+.modal-divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--gray);font-size:13px}
+.modal-divider::before,.modal-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.pass-toggle{position:relative}
+.pass-toggle .toggle-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--gray);font-size:16px;user-select:none}
+.modal-error{background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px;display:none}
+.modal-success{background:rgba(0,200,81,0.1);border:1px solid rgba(0,200,81,0.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--green);margin-bottom:14px;display:none}
+.strength-bar{display:flex;gap:4px;margin-top:6px}
+.strength-seg{flex:1;height:3px;border-radius:2px;background:var(--border)}
+.strength-label{font-size:11px;color:var(--gray);margin-top:4px}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:3000;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;font-size:14px;min-width:280px;max-width:360px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 30px rgba(0,0,0,0.4);opacity:0;transform:translateX(20px);transition:all 0.3s;pointer-events:all;}
+.toast.show{opacity:1;transform:translateX(0)}
+.toast.success{border-color:rgba(0,200,81,0.3)}
+.toast.error{border-color:rgba(255,71,87,0.3)}
+.toast.info{border-color:rgba(26,110,255,0.3)}
+.toast-icon{font-size:18px}
+.toast-msg{flex:1}
+
+/* LOADING */
+.loading-overlay{position:fixed;inset:0;background:rgba(10,22,40,0.85);z-index:1500;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;display:none}
+.loading-overlay.show{display:flex}
+.spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:var(--gray);font-size:14px;animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+.skeleton{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton-card{height:120px;border-radius:16px;margin-bottom:12px}
+
+/* FLOATING LIVE SEARCH */
+.live-price{position:fixed;bottom:24px;left:24px;z-index:900;background:var(--card);border:1px solid rgba(0,200,81,0.3);border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 30px rgba(0,0,0,0.4);animation:slideUp 0.4s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.live-pulse{width:8px;height:8px;border-radius:50%;background:var(--green);animation:livePulse 1.5s ease infinite}
+@keyframes livePulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:0.6}}
+.live-text{font-size:13px}
+.live-route{font-weight:700;color:var(--white)}
+.live-price-val{color:var(--green);font-weight:700}
+
+/* FOOTER */
+footer{background:var(--sky2);border-top:1px solid var(--border);padding:50px 40px 30px;text-align:center;}
+.footer-inner{max-width:1200px;margin:0 auto}
+.footer-logo{font-family:var(--font-display);font-size:28px;font-weight:700;margin-bottom:16px}
+.footer-logo span{color:var(--gold)}
+.footer-links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:20px}
+.footer-link{color:var(--gray);font-size:13px;cursor:pointer;transition:color 0.2s;text-decoration:none}
+.footer-link:hover{color:var(--white)}
+.footer-badges{display:flex;justify-content:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.footer-badge{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--gray);display:flex;align-items:center;gap:6px}
+.footer-copy{font-size:13px;color:var(--gray)}
+.footer-copy span{color:var(--blue)}
+
+/* MISC */
+.price-alert-banner{background:linear-gradient(135deg,rgba(0,200,81,0.1),rgba(0,200,81,0.05));border:1px solid rgba(0,200,81,0.2);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:14px;}
+.price-drop-badge{background:var(--green);color:var(--white);font-size:11px;font-weight:700;padding:2px 8px;border-radius:100px}
+.empty-state{text-align:center;padding:60px 20px;color:var(--gray)}
+.empty-icon{font-size:48px;margin-bottom:16px}
+.back-btn{display:inline-flex;align-items:center;gap:8px;color:var(--gray);cursor:pointer;font-size:14px;margin-bottom:20px;transition:color 0.2s;border:none;background:none;font-family:var(--font);}
+.back-btn:hover{color:var(--white)}
+select option{background:#1a2a40}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Searching best fares...</div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="showPage('home')">
+    <div class="logo-icon">✈</div>
+    <div class="logo-text">Sky<span>Book</span></div>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="showPage('home')">Home</button>
+    <button class="nav-link" onclick="showPage('flights-page')">Flights</button>
+    <button class="nav-link" onclick="showDeals()">Deals</button>
+    <button class="nav-link" onclick="showPage('home');setTimeout(()=>document.getElementById('why-section').scrollIntoView({behavior:'smooth'}),300)">Why SkyBook</button>
+    <button class="nav-link notif-badge" onclick="openNotifications()" id="notif-btn">🔔 <span class="notif-dot" id="notif-dot"></span></button>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <div id="nav-auth-btns">
+      <button class="nav-btn outline" onclick="openModal('login')" style="margin-right:6px">Log In</button>
+      <button class="nav-btn" onclick="openModal('signup')">Sign Up</button>
+    </div>
+    <div id="nav-user-area" style="display:none;align-items:center;gap:10px">
+      <div class="user-avatar" onclick="showPage('dashboard-page');loadDashboard()" id="nav-avatar">A</div>
+      <button class="nav-btn outline" onclick="logout()" style="font-size:13px;padding:7px 14px">Log Out</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════ HOME PAGE ═══════════════════════════════ -->
+<div class="page active" id="home">
+  <div id="home-inner">
+    <div class="hero-bg"></div>
+
+    <!-- LIVE PRICE TICKER -->
+    <div class="ticker-wrap">
+      <div class="ticker" id="price-ticker">
+        <span class="ticker-item">✈ <span class="route">ISB→DXB</span>&nbsp;<span class="price">$165</span></span>
+        <span class="ticker-item">✈ <span class="route">KHI→LHR</span>&nbsp;<span class="price">$489</span></span>
+        <span class="ticker-item">✈ <span class="route">LHE→DOH</span>&nbsp;<span class="price">$195</span></span>
+        <span class="ticker-item">✈ <span class="route">ISB→IST</span>&nbsp;<span class="price">$310</span></span>
+        <span class="ticker-item">✈ <span class="route">KHI→DXB</span>&nbsp;<span class="price">$130</span></span>
+        <span class="ticker-item">✈ <span class="route">ISB→JFK</span>&nbsp;<span class="price">$890</span></span>
+        <span class="ticker-item">✈ <span class="route">LHE→IST</span>&nbsp;<span class="price">$370</span></span>
+        <span class="ticker-item">✈ <span class="route">ISB→LHR</span>&nbsp;<span class="price">$490</span></span>
+        <!-- duplicate for seamless loop -->
+        <span class="ticker-item">✈ <span class="route">ISB→DXB</span>&nbsp;<span class="price">$165</span></span>
+        <span class="ticker-item">✈ <span class="route">KHI→LHR</span>&nbsp;<span class="price">$489</span></span>
+        <span class="ticker-item">✈ <span class="route">LHE→DOH</span>&nbsp;<span class="price">$195</span></span>
+        <span class="ticker-item">✈ <span class="route">ISB→IST</span>&nbsp;<span class="price">$310</span></span>
+        <span class="ticker-item">✈ <span class="route">KHI→DXB</span>&nbsp;<span class="price">$130</span></span>
+        <span class="ticker-item">✈ <span class="route">ISB→JFK</span>&nbsp;<span class="price">$890</span></span>
+        <span class="ticker-item">✈ <span class="route">LHE→IST</span>&nbsp;<span class="price">$370</span></span>
+        <span class="ticker-item">✈ <span class="route">ISB→LHR</span>&nbsp;<span class="price">$490</span></span>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-badge">✈ 500+ Airlines • Real-Time Prices</div>
+      <h1 class="hero-title">Fly Anywhere,<br><span>Pay Less.</span></h1>
+      <p class="hero-sub">Search, compare & book flights from 500+ airlines. Best prices guaranteed with instant e-tickets.</p>
+
+      <!-- SEARCH BOX -->
+      <div class="search-box">
+        <div class="trip-tabs">
+          <button class="trip-tab active" onclick="setTripType(this,'one-way')">One Way</button>
+          <button class="trip-tab" onclick="setTripType(this,'round-trip')">Round Trip</button>
+          <button class="trip-tab" onclick="setTripType(this,'multi-city')">Multi-City</button>
+        </div>
+        <div class="search-grid">
+          <div class="search-field" style="position:relative">
+            <label class="search-label">From</label>
+            <input class="search-input" id="s-origin" placeholder="City or Airport" autocomplete="off"
+              oninput="showAutocomplete(this,'ac-origin')" onblur="setTimeout(()=>hideAC('ac-origin'),200)"/>
+            <div class="autocomplete-list" id="ac-origin"></div>
+          </div>
+          <div style="position:relative;display:flex;flex-direction:column;gap:6px">
+            <div style="position:absolute;left:-16px;top:30px;z-index:10">
+              <button class="swap-btn" onclick="swapAirports()" title="Swap">⇄</button>
+            </div>
+            <label class="search-label">To</label>
+            <input class="search-input" id="s-dest" placeholder="City or Airport" autocomplete="off"
+              oninput="showAutocomplete(this,'ac-dest')" onblur="setTimeout(()=>hideAC('ac-dest'),200)"/>
+            <div class="autocomplete-list" id="ac-dest"></div>
+          </div>
+          <div class="search-field">
+            <label class="search-label">Departure</label>
+            <input class="search-input" id="s-date" type="date"/>
+          </div>
+          <div class="search-field" id="return-field" style="display:none">
+            <label class="search-label">Return</label>
+            <input class="search-input" id="s-return" type="date"/>
+          </div>
+          <div class="search-field">
+            <label class="search-label">Passengers</label>
+            <div class="pax-controls">
+              <button class="pax-btn" onclick="changePax(-1)">−</button>
+              <span id="pax-display" style="font-size:15px;font-weight:600;min-width:20px;text-align:center">1</span>
+              <button class="pax-btn" onclick="changePax(1)">+</button>
+              <span style="font-size:13px;color:var(--gray)">Adult</span>
+            </div>
+          </div>
+          <div class="search-field">
+            <label class="search-label">Class</label>
+            <select class="search-input" id="s-class" style="appearance:none">
+              <option value="ECONOMY">Economy</option>
+              <option value="BUSINESS">Business</option>
+              <option value="FIRST">First Class</option>
+            </select>
+          </div>
+          <button class="search-btn" onclick="searchFlights()">🔍 Search</button>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats" id="stats-row">
+        <div><div class="stat-num" id="stat-airlines">500<span>+</span></div><div class="stat-label">Airlines</div></div>
+        <div><div class="stat-num" id="stat-dest">150<span>+</span></div><div class="stat-label">Destinations</div></div>
+        <div><div class="stat-num" id="stat-travelers">89K<span>+</span></div><div class="stat-label">Happy Travelers</div></div>
+        <div><div class="stat-num">24<span>/7</span></div><div class="stat-label">Support</div></div>
+      </div>
+    </div>
+
+    <!-- POPULAR ROUTES -->
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Popular <span>Routes</span></h2>
+        <a class="see-all" onclick="showPage('flights-page');loadFlightsPage()">See all routes →</a>
+      </div>
+      <div class="routes-grid" id="routes-grid">
+        <div class="route-card" onclick="quickSearch('ISB','DXB')">
+          <div class="route-img" style="background:linear-gradient(135deg,#1a3a5c,#8B5A2B)">🕌<div class="route-img-overlay">✈ Dubai, UAE</div></div>
+          <div class="route-card-body">
+            <div class="route-cities">Islamabad → Dubai</div>
+            <div class="route-info"><span>⏱ 3h 15m</span><span>✅ Direct</span><span>📅 Daily</span></div>
+            <div class="route-price"><div><div class="price-from">From</div><div class="price-amount">$165</div></div><div class="price-tag">🔥 Hot Deal</div></div>
+          </div>
+        </div>
+        <div class="route-card" onclick="quickSearch('KHI','LHR')">
+          <div class="route-img" style="background:linear-gradient(135deg,#1a2a5c,#8B1A1A)">🎡<div class="route-img-overlay">✈ London, UK</div></div>
+          <div class="route-card-body">
+            <div class="route-cities">Karachi → London</div>
+            <div class="route-info"><span>⏱ 9h 30m</span><span>🔄 1 stop</span><span>📅 3x/week</span></div>
+            <div class="route-price"><div><div class="price-from">From</div><div class="price-amount">$489</div></div><div class="price-tag">Popular</div></div>
+          </div>
+        </div>
+        <div class="route-card" onclick="quickSearch('LHE','DOH')">
+          <div class="route-img" style="background:linear-gradient(135deg,#2a1a5c,#5c4a1a)">🏟<div class="route-img-overlay">✈ Doha, Qatar</div></div>
+          <div class="route-card-body">
+            <div class="route-cities">Lahore → Doha</div>
+            <div class="route-info"><span>⏱ 4h 00m</span><span>✅ Direct</span><span>📅 Daily</span></div>
+            <div class="route-price"><div><div class="price-from">From</div><div class="price-amount">$195</div></div><div class="price-tag">✨ Best Value</div></div>
+          </div>
+        </div>
+        <div class="route-card" onclick="quickSearch('ISB','IST')">
+          <div class="route-img" style="background:linear-gradient(135deg,#2a1a40,#1a3a5c)">🕍<div class="route-img-overlay">✈ Istanbul, Turkey</div></div>
+          <div class="route-card-body">
+            <div class="route-cities">Islamabad → Istanbul</div>
+            <div class="route-info"><span>⏱ 6h 45m</span><span>✅ Direct</span><span>📅 Daily</span></div>
+            <div class="route-price"><div><div class="price-from">From</div><div class="price-amount">$310</div></div><div class="price-tag">Popular</div></div>
+          </div>
+        </div>
+        <div class="route-card" onclick="quickSearch('KHI','DXB')">
+          <div class="route-img" style="background:linear-gradient(135deg,#0a2a3c,#8B5A2B)">🏙<div class="route-img-overlay">✈ Dubai, UAE</div></div>
+          <div class="route-card-body">
+            <div class="route-cities">Karachi → Dubai</div>
+            <div class="route-info"><span>⏱ 2h 45m</span><span>✅ Direct</span><span>📅 Daily</span></div>
+            <div class="route-price"><div><div class="price-from">From</div><div class="price-amount">$130</div></div><div class="price-tag">🔥 Cheapest</div></div>
+          </div>
+        </div>
+        <div class="route-card" onclick="quickSearch('ISB','JFK')">
+          <div class="route-img" style="background:linear-gradient(135deg,#1a1a5c,#3c1a1a)">🗽<div class="route-img-overlay">✈ New York, USA</div></div>
+          <div class="route-card-body">
+            <div class="route-cities">Islamabad → New York</div>
+            <div class="route-info"><span>⏱ 18h 30m</span><span>🔄 2 stops</span><span>📅 2x/week</span></div>
+            <div class="route-price"><div><div class="price-from">From</div><div class="price-amount">$890</div></div><div class="price-tag">Premium</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEALS -->
+    <div class="section" id="deals-section">
+      <div class="section-header">
+        <h2 class="section-title">🔥 Exclusive <span>Deals</span></h2>
+        <a class="see-all" onclick="showDeals()">All offers →</a>
+      </div>
+      <div class="deals-grid" id="deals-grid">
+        <div class="deal-card" onclick="applyDeal('SUMMER30','ISB','DXB')">
+          <div class="deal-badge">30% OFF</div>
+          <div class="deal-title">Summer Sale</div>
+          <div class="deal-route">✈ Islamabad → Dubai</div>
+          <div class="deal-price">$129 <span style="font-size:14px;color:var(--gray);text-decoration:line-through">$189</span></div>
+          <div class="deal-code">Code: SUMMER30</div>
+          <div class="deal-expires">⏰ Expires Aug 31, 2025</div>
+        </div>
+        <div class="deal-card" onclick="applyDeal('EID25','KHI','LHR')">
+          <div class="deal-badge">25% OFF</div>
+          <div class="deal-title">Eid Special</div>
+          <div class="deal-route">✈ Karachi → London</div>
+          <div class="deal-price">$389 <span style="font-size:14px;color:var(--gray);text-decoration:line-through">$520</span></div>
+          <div class="deal-code">Code: EID25</div>
+          <div class="deal-expires">⏰ Expires Jun 30, 2025</div>
+        </div>
+        <div class="deal-card" onclick="applyDeal('BIZ20','ISB','IST')">
+          <div class="deal-badge" style="background:linear-gradient(135deg,var(--purple),#4c1d95)">20% OFF</div>
+          <div class="deal-title">Business Class Promo</div>
+          <div class="deal-route">✈ Islamabad → Istanbul</div>
+          <div class="deal-price">$850 <span style="font-size:14px;color:var(--gray);text-decoration:line-through">$1,062</span></div>
+          <div class="deal-code">Code: BIZ20</div>
+          <div class="deal-expires">⏰ Expires Jul 15, 2025</div>
+        </div>
+        <div class="deal-card" onclick="applyDeal('WKND15','LHE','DOH')">
+          <div class="deal-badge" style="background:linear-gradient(135deg,var(--teal),#0369a1)">15% OFF</div>
+          <div class="deal-title">Weekend Getaway</div>
+          <div class="deal-route">✈ Lahore → Doha</div>
+          <div class="deal-price">$175 <span style="font-size:14px;color:var(--gray);text-decoration:line-through">$210</span></div>
+          <div class="deal-code">Code: WKND15</div>
+          <div class="deal-expires">⏰ Expires Jun 15, 2025</div>
+        </div>
+        <div class="deal-card" onclick="applyDeal('STUDENT20','ISB','LHR')">
+          <div class="deal-badge" style="background:linear-gradient(135deg,#059669,#047857)">20% OFF</div>
+          <div class="deal-title">Student Discount</div>
+          <div class="deal-route">✈ Islamabad → London</div>
+          <div class="deal-price">$399 <span style="font-size:14px;color:var(--gray);text-decoration:line-through">$490</span></div>
+          <div class="deal-code">Code: STUDENT20</div>
+          <div class="deal-expires">⏰ Valid all year</div>
+        </div>
+        <div class="deal-card" onclick="applyDeal('COUPLE10','ISB','BKK')">
+          <div class="deal-badge" style="background:linear-gradient(135deg,#ec4899,#be185d)">10% OFF</div>
+          <div class="deal-title">Couple Deal</div>
+          <div class="deal-route">✈ Islamabad → Bangkok</div>
+          <div class="deal-price">$520 <span style="font-size:14px;color:var(--gray);text-decoration:line-through">$580</span></div>
+          <div class="deal-code">Code: COUPLE10</div>
+          <div class="deal-expires">⏰ Expires Sep 30, 2025</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AIRLINES -->
+    <div class="section" style="padding-top:0">
+      <div class="section-header">
+        <h2 class="section-title">Our <span>Airlines</span></h2>
+        <a class="see-all" onclick="showPage('flights-page')">Browse all →</a>
+      </div>
+      <div class="airlines-strip">
+        <div class="airline-chip" onclick="searchByAirline('EK')"><span style="font-size:20px">🔴</span><div><div style="font-weight:600;font-size:14px">Emirates</div><div class="airline-chip-rating">⭐ 4.7 • UAE</div></div></div>
+        <div class="airline-chip" onclick="searchByAirline('QR')"><span style="font-size:20px">🟤</span><div><div style="font-weight:600;font-size:14px">Qatar Airways</div><div class="airline-chip-rating">⭐ 4.6 • Qatar</div></div></div>
+        <div class="airline-chip" onclick="searchByAirline('TK')"><span style="font-size:20px">🔵</span><div><div style="font-weight:600;font-size:14px">Turkish Airlines</div><div class="airline-chip-rating">⭐ 4.4 • Turkey</div></div></div>
+        <div class="airline-chip" onclick="searchByAirline('EY')"><span style="font-size:20px">⚪</span><div><div style="font-weight:600;font-size:14px">Etihad Airways</div><div class="airline-chip-rating">⭐ 4.5 • UAE</div></div></div>
+        <div class="airline-chip" onclick="searchByAirline('SQ')"><span style="font-size:20px">🟡</span><div><div style="font-weight:600;font-size:14px">Singapore Airlines</div><div class="airline-chip-rating">⭐ 4.8 • Singapore</div></div></div>
+        <div class="airline-chip" onclick="searchByAirline('PK')"><span style="font-size:20px">🟢</span><div><div style="font-weight:600;font-size:14px">PIA</div><div class="airline-chip-rating">⭐ 3.8 • Pakistan</div></div></div>
+        <div class="airline-chip" onclick="searchByAirline('BA')"><span style="font-size:20px">🔵</span><div><div style="font-weight:600;font-size:14px">British Airways</div><div class="airline-chip-rating">⭐ 4.3 • UK</div></div></div>
+        <div class="airline-chip" onclick="searchByAirline('LH')"><span style="font-size:20px">🟡</span><div><div style="font-weight:600;font-size:14px">Lufthansa</div><div class="airline-chip-rating">⭐ 4.4 • Germany</div></div></div>
+      </div>
+    </div>
+
+    <!-- WHY SKYBOOK -->
+    <div class="features" id="why-section">
+      <div class="features-inner">
+        <div class="section-header">
+          <h2 class="section-title">Why Choose <span>SkyBook</span></h2>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card" onclick="showFeatureModal('search')">
+            <span class="feature-icon">🔍</span>
+            <div class="feature-title">Real-Time Search</div>
+            <div class="feature-desc">Live prices from 500+ airlines updated every 60 seconds. Always find the cheapest fare available.</div>
+            <div class="feature-more">Learn more →</div>
+          </div>
+          <div class="feature-card" onclick="showFeatureModal('payment')">
+            <span class="feature-icon">💳</span>
+            <div class="feature-title">Secure Payments</div>
+            <div class="feature-desc">Bank-grade 256-bit encryption. Pay with Visa, Mastercard, JazzCash, EasyPaisa, or PayPal.</div>
+            <div class="feature-more">Learn more →</div>
+          </div>
+          <div class="feature-card" onclick="showFeatureModal('ticket')">
+            <span class="feature-icon">🎫</span>
+            <div class="feature-title">Instant E-Ticket</div>
+            <div class="feature-desc">PDF boarding pass with QR code delivered to your inbox within seconds of booking.</div>
+            <div class="feature-more">Learn more →</div>
+          </div>
+          <div class="feature-card" onclick="showFeatureModal('loyalty')">
+            <span class="feature-icon">🏆</span>
+            <div class="feature-title">Loyalty Miles</div>
+            <div class="feature-desc">Earn 1.5 miles per dollar spent. Redeem for free flights, upgrades, and lounge access.</div>
+            <div class="feature-more">Learn more →</div>
+          </div>
+          <div class="feature-card" onclick="showFeatureModal('cancel')">
+            <span class="feature-icon">🔄</span>
+            <div class="feature-title">Free Cancellation</div>
+            <div class="feature-desc">Cancel within 24 hours of booking with full refund. Up to 85% refund on eligible tickets after 24h.</div>
+            <div class="feature-more">Learn more →</div>
+          </div>
+          <div class="feature-card" onclick="showFeatureModal('support')">
+            <span class="feature-icon">🎧</span>
+            <div class="feature-title">24/7 Support</div>
+            <div class="feature-desc">Round-the-clock customer support via live chat, email, and phone in Urdu & English.</div>
+            <div class="feature-more">Learn more →</div>
+          </div>
+          <div class="feature-card" onclick="showFeatureModal('price')">
+            <span class="feature-icon">📉</span>
+            <div class="feature-title">Price Drop Alerts</div>
+            <div class="feature-desc">Set a target price and get notified when fares drop on your favorite routes. Never miss a deal.</div>
+            <div class="feature-more">Learn more →</div>
+          </div>
+          <div class="feature-card" onclick="showFeatureModal('track')">
+            <span class="feature-icon">📡</span>
+            <div class="feature-title">Flight Tracking</div>
+            <div class="feature-desc">Real-time flight status, gate changes, delays, and live departure board at all major airports.</div>
+            <div class="feature-more">Learn more →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TESTIMONIALS -->
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">What Travelers <span>Say</span></h2>
+        <a class="see-all" onclick="showReviews()">All reviews →</a>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card"><div class="stars">★★★★★</div><div class="testimonial-text">"Booked ISB to Dubai in under 2 minutes. Got my e-ticket immediately. Best booking experience I've ever had!"</div><div class="testimonial-author"><div class="author-avatar">A</div><div><div class="author-name">Ahmed Raza</div><div class="author-route">ISB → DXB • Gold Member</div></div></div></div>
+        <div class="testimonial-card"><div class="stars">★★★★★</div><div class="testimonial-text">"SkyBook saved me $180 on my London trip compared to other sites. The price tracker is incredible. Highly recommend!"</div><div class="testimonial-author"><div class="author-avatar">S</div><div><div class="author-name">Sara Malik</div><div class="author-route">LHE → LHR • Silver Member</div></div></div></div>
+        <div class="testimonial-card"><div class="stars">★★★★☆</div><div class="testimonial-text">"Customer service helped me reschedule my flight at midnight. JazzCash payment worked perfectly. 5 stars!"</div><div class="testimonial-author"><div class="author-avatar">U</div><div><div class="author-name">Usman Ali</div><div class="author-route">KHI → DOH • Platinum</div></div></div></div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-logo">Sky<span>Book</span></div>
+        <div class="footer-links">
+          <a class="footer-link" onclick="showPage('home')">Home</a>
+          <a class="footer-link" onclick="showPage('flights-page')">Flights</a>
+          <a class="footer-link" onclick="showDeals()">Deals</a>
+          <a class="footer-link" onclick="showFeatureModal('support')">Support</a>
+          <a class="footer-link" onclick="openModal('login')">My Bookings</a>
+          <a class="footer-link" onclick="showFeatureModal('loyalty')">Loyalty Program</a>
+          <a class="footer-link">Privacy Policy</a>
+          <a class="footer-link">Terms of Service</a>
+        </div>
+        <div class="footer-badges">
+          <div class="footer-badge">🔒 256-bit SSL Encrypted</div>
+          <div class="footer-badge">✅ IATA Accredited</div>
+          <div class="footer-badge">💳 PCI DSS Compliant</div>
+          <div class="footer-badge">⭐ Trusted by 89K+ travelers</div>
+        </div>
+        <div class="footer-copy">© 2025 SkyBook. All rights reserved. Built with ❤️ for Pakistan's travelers. <span>Powered by SkyBook AI Engine</span></div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- ════════════════════════════ FLIGHTS PAGE ════════════════════════════════ -->
+<div class="page" id="flights-page">
+  <div class="flights-header">
+    <div class="flights-header-inner">
+      <div class="search-summary">
+        <button class="back-btn" onclick="showPage('home')" style="margin-bottom:0">← Back</button>
+        <div class="route-pill" id="route-pill">✈ ISB → DXB</div>
+        <span style="color:var(--gray);font-size:14px" id="flight-count-label">Searching...</span>
+        <div class="price-alert-banner" style="margin:0;padding:8px 14px;font-size:13px" id="price-alert-inline">
+          <span class="live-pulse"></span>
+          <span>Prices updated live — <strong style="color:var(--green)">3 seats at lowest price remaining</strong></span>
+        </div>
+      </div>
+      <div class="search-mini">
+        <div class="search-field"><label class="search-label">From</label><input class="search-input" id="s2-origin" placeholder="ISB"/></div>
+        <div class="search-field"><label class="search-label">To</label><input class="search-input" id="s2-dest" placeholder="DXB"/></div>
+        <div class="search-field"><label class="search-label">Date</label><input class="search-input" id="s2-date" type="date"/></div>
+        <div class="search-field"><label class="search-label">Cabin</label>
+          <select class="search-input" id="s2-class"><option value="ECONOMY">Economy</option><option value="BUSINESS">Business</option><option value="FIRST">First</option></select>
+        </div>
+        <button class="search-btn" onclick="searchFlights2()">Update</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="flights-body">
+    <!-- FILTERS -->
+    <div class="filters-panel">
+      <div class="filter-title">Filters <span class="filter-reset" onclick="resetFilters()">Reset all</span></div>
+      <div class="filter-section">
+        <div class="filter-label">Stops</div>
+        <div class="filter-options">
+          <label class="filter-option"><input type="checkbox" id="f-direct" checked onchange="applyFilters()"> Direct only</label>
+          <label class="filter-option"><input type="checkbox" id="f-1stop" checked onchange="applyFilters()"> 1 Stop</label>
+          <label class="filter-option"><input type="checkbox" id="f-2stop" checked onchange="applyFilters()"> 2+ Stops</label>
+        </div>
+      </div>
+      <div class="filter-section">
+        <div class="filter-label">Max Price (USD)</div>
+        <input type="range" class="price-range" min="50" max="2000" value="2000" id="price-filter" oninput="updatePriceFilter(this)"/>
+        <div class="price-display"><span>$50</span><span id="price-max-label">$2000</span></div>
+      </div>
+      <div class="filter-section">
+        <div class="filter-label">Airline</div>
+        <div class="filter-options" id="airline-filters">
+          <label class="filter-option"><input type="checkbox" checked value="EK" onchange="applyFilters()"> Emirates</label>
+          <label class="filter-option"><input type="checkbox" checked value="QR" onchange="applyFilters()"> Qatar Airways</label>
+          <label class="filter-option"><input type="checkbox" checked value="PK" onchange="applyFilters()"> PIA</label>
+          <label class="filter-option"><input type="checkbox" checked value="TK" onchange="applyFilters()"> Turkish Airlines</label>
+          <label class="filter-option"><input type="checkbox" checked value="EY" onchange="applyFilters()"> Etihad Airways</label>
+          <label class="filter-option"><input type="checkbox" checked value="FZ" onchange="applyFilters()"> Flydubai</label>
+          <label class="filter-option"><input type="checkbox" checked value="SV" onchange="applyFilters()"> Saudia</label>
+          <label class="filter-option"><input type="checkbox" checked value="BA" onchange="applyFilters()"> British Airways</label>
+        </div>
+      </div>
+      <div class="filter-section">
+        <div class="filter-label">Departure Time</div>
+        <div class="filter-options">
+          <label class="filter-option"><input type="checkbox" id="f-morning" checked onchange="applyFilters()"> Morning (6am–12pm)</label>
+          <label class="filter-option"><input type="checkbox" id="f-afternoon" checked onchange="applyFilters()"> Afternoon (12–6pm)</label>
+          <label class="filter-option"><input type="checkbox" id="f-evening" checked onchange="applyFilters()"> Evening (6pm–12am)</label>
+          <label class="filter-option"><input type="checkbox" id="f-night" checked onchange="applyFilters()"> Night (12–6am)</label>
+        </div>
+      </div>
+      <div class="filter-section">
+        <div class="filter-label">Features</div>
+        <div class="filter-options">
+          <label class="filter-option"><input type="checkbox" id="f-refund" onchange="applyFilters()"> Refundable</label>
+          <label class="filter-option"><input type="checkbox" id="f-wifi" onchange="applyFilters()"> WiFi on board</label>
+          <label class="filter-option"><input type="checkbox" id="f-meal" onchange="applyFilters()"> Meal included</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLIGHTS LIST -->
+    <div>
+      <div class="sort-bar">
+        <button class="sort-btn active" onclick="sortFlights('price',this)">Cheapest</button>
+        <button class="sort-btn" onclick="sortFlights('duration',this)">Fastest</button>
+        <button class="sort-btn" onclick="sortFlights('departure',this)">Earliest Dep.</button>
+        <button class="sort-btn" onclick="sortFlights('arrival',this)">Earliest Arr.</button>
+        <button class="sort-btn" onclick="sortFlights('rating',this)">Best Rated</button>
+      </div>
+      <div class="flights-list" id="flights-list">
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ BOOKING PAGE ════════════════════════════════ -->
+<div class="page" id="booking-page">
+  <div style="max-width:1100px;margin:0 auto;padding:20px 40px 10px">
+    <button class="back-btn" onclick="showPage('flights-page')">← Back to Flights</button>
+  </div>
+  <div class="booking-layout">
+    <div class="booking-form-section">
+
+      <!-- PASSENGER INFO -->
+      <div class="form-card">
+        <div class="form-card-title"><span class="step-num">1</span> Passenger Information</div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">First Name *</label><input class="form-input" id="b-fname" placeholder="Ahmed"/></div>
+          <div class="form-group"><label class="form-label">Last Name *</label><input class="form-input" id="b-lname" placeholder="Khan"/></div>
+          <div class="form-group"><label class="form-label">Date of Birth *</label><input class="form-input" id="b-dob" type="date"/></div>
+          <div class="form-group"><label class="form-label">Gender</label><select class="form-select" id="b-gender"><option>Male</option><option>Female</option><option>Other</option></select></div>
+          <div class="form-group"><label class="form-label">Nationality *</label><select class="form-select" id="b-nationality"><option>Pakistani</option><option>British</option><option>American</option><option>Indian</option><option>Canadian</option><option>Other</option></select></div>
+          <div class="form-group"><label class="form-label">Passport / CNIC *</label><input class="form-input" id="b-passport" placeholder="AB1234567"/></div>
+          <div class="form-group"><label class="form-label">Email Address *</label><input class="form-input" id="b-email" type="email" placeholder="ahmed@email.com"/></div>
+          <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" id="b-phone" placeholder="+92 300 1234567"/></div>
+        </div>
+      </div>
+
+      <!-- SEAT SELECTION -->
+      <div class="form-card">
+        <div class="form-card-title"><span class="step-num">2</span> Select Your Seat</div>
+        <div style="font-size:13px;color:var(--gray);margin-bottom:14px">Click on an available seat to select it. Premium seats have extra legroom.</div>
+        <div class="seats-grid" id="seats-grid"></div>
+        <div class="seat-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--sky2);border:1px solid var(--border)"></div>Available</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Selected</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(255,71,87,0.3)"></div>Taken</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(255,184,0,0.3)"></div>Premium (+$25)</div>
+        </div>
+      </div>
+
+      <!-- ADD-ONS -->
+      <div class="form-card">
+        <div class="form-card-title"><span class="step-num">3</span> Add-Ons & Extras</div>
+        <div class="extras-grid">
+          <div class="extra-item" id="extra-baggage" onclick="toggleExtra(this,'baggage',45)">
+            <div class="extra-icon">🧳</div>
+            <div class="extra-name">Extra Baggage</div>
+            <div class="extra-price">+$45</div>
+            <div class="extra-desc">Additional 23kg checked bag</div>
+          </div>
+          <div class="extra-item" id="extra-meal" onclick="toggleExtra(this,'meal',18)">
+            <div class="extra-icon">🍽</div>
+            <div class="extra-name">Meal Selection</div>
+            <div class="extra-price">+$18</div>
+            <div class="extra-desc">Choose your in-flight meal</div>
+          </div>
+          <div class="extra-item" id="extra-insurance" onclick="toggleExtra(this,'insurance',25)">
+            <div class="extra-icon">🛡</div>
+            <div class="extra-name">Travel Insurance</div>
+            <div class="extra-price">+$25</div>
+            <div class="extra-desc">Medical, delay & cancellation cover</div>
+          </div>
+          <div class="extra-item" id="extra-lounge" onclick="toggleExtra(this,'lounge',35)">
+            <div class="extra-icon">🛋</div>
+            <div class="extra-name">Lounge Access</div>
+            <div class="extra-price">+$35</div>
+            <div class="extra-desc">Premium airport lounge access</div>
+          </div>
+          <div class="extra-item" id="extra-fast" onclick="toggleExtra(this,'fast_track',15)">
+            <div class="extra-icon">⚡</div>
+            <div class="extra-name">Fast Track Security</div>
+            <div class="extra-price">+$15</div>
+            <div class="extra-desc">Skip the queue at security</div>
+          </div>
+          <div class="extra-item" id="extra-priority" onclick="toggleExtra(this,'priority',20)">
+            <div class="extra-icon">🏷</div>
+            <div class="extra-name">Priority Boarding</div>
+            <div class="extra-price">+$20</div>
+            <div class="extra-desc">Board the plane first</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAYMENT -->
+      <div class="form-card">
+        <div class="form-card-title"><span class="step-num">4</span> Payment Method</div>
+        <div class="payment-methods">
+          <div class="pay-method active" onclick="selectPayment(this,'card')" id="pm-card">
+            <div class="pay-method-icon">💳</div>
+            <div><div class="pay-method-name">Credit / Debit Card</div><div class="pay-method-desc">Visa, Mastercard, Amex</div></div>
+            <div style="margin-left:auto"><input type="radio" name="pm" checked style="accent-color:var(--blue)"/></div>
+          </div>
+          <div class="card-fields show" id="card-fields">
+            <div class="form-group"><label class="form-label">Card Number</label><input class="form-input" id="card-num" placeholder="0000 0000 0000 0000" oninput="formatCard(this)" maxlength="19"/></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+              <div class="form-group"><label class="form-label">Expiry</label><input class="form-input" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)"/></div>
+              <div class="form-group"><label class="form-label">CVV</label><input class="form-input" placeholder="123" maxlength="4" type="password"/></div>
+              <div class="form-group"><label class="form-label">Name</label><input class="form-input" placeholder="On card"/></div>
+            </div>
+            <div class="card-icons"><span class="card-icon">VISA</span><span class="card-icon">MC</span><span class="card-icon">AMEX</span></div>
+          </div>
+          <div class="pay-method" onclick="selectPayment(this,'jazzcash')">
+            <div class="pay-method-icon">📱</div>
+            <div><div class="pay-method-name">JazzCash</div><div class="pay-method-desc">Pay via JazzCash mobile account</div></div>
+            <div style="margin-left:auto"><input type="radio" name="pm" style="accent-color:var(--blue)"/></div>
+          </div>
+          <div class="pay-method" onclick="selectPayment(this,'easypaisa')">
+            <div class="pay-method-icon">💚</div>
+            <div><div class="pay-method-name">EasyPaisa</div><div class="pay-method-desc">Pay via EasyPaisa mobile wallet</div></div>
+            <div style="margin-left:auto"><input type="radio" name="pm" style="accent-color:var(--blue)"/></div>
+          </div>
+          <div class="pay-method" onclick="selectPayment(this,'paypal')">
+            <div class="pay-method-icon">🅿</div>
+            <div><div class="pay-method-name">PayPal</div><div class="pay-method-desc">Secure PayPal checkout</div></div>
+            <div style="margin-left:auto"><input type="radio" name="pm" style="accent-color:var(--blue)"/></div>
+          </div>
+          <div class="pay-method" onclick="selectPayment(this,'bank')">
+            <div class="pay-method-icon">🏦</div>
+            <div><div class="pay-method-name">Bank Transfer</div><div class="pay-method-desc">Direct bank transfer (1-2 business days)</div></div>
+            <div style="margin-left:auto"><input type="radio" name="pm" style="accent-color:var(--blue)"/></div>
+          </div>
+        </div>
+
+        <!-- PROMO CODE -->
+        <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+          <div class="filter-label" style="margin-bottom:10px">Promo Code</div>
+          <div class="coupon-row">
+            <input class="coupon-input" id="coupon-input" placeholder="Enter promo code" style="text-transform:uppercase"/>
+            <button class="coupon-btn" onclick="applyCoupon()">Apply</button>
+          </div>
+          <div class="coupon-success" id="coupon-success"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOKING SUMMARY -->
+    <div class="booking-summary">
+      <div class="summary-title">Booking Summary</div>
+      <div class="summary-flight" id="sum-flight-box">
+        <div class="summary-route" id="sum-route">ISB → DXB</div>
+        <div class="summary-details" id="sum-details">Emirates EK 201 • Economy</div>
+      </div>
+      <div class="summary-line"><span class="label">Base Fare</span><span id="sum-base">$189</span></div>
+      <div class="summary-line"><span class="label">Taxes & Fees</span><span id="sum-taxes">$28</span></div>
+      <div class="summary-line"><span class="label">Add-ons</span><span id="sum-extras">$0</span></div>
+      <div class="summary-line" id="discount-line" style="display:none"><span class="label">Promo Discount</span><span class="discount" id="sum-discount">-$0</span></div>
+      <div class="summary-line total"><span class="label">Total</span><span id="sum-total">$217</span></div>
+      <div class="miles-preview" id="miles-preview">✈ You'll earn ~<strong id="miles-earn">326</strong> SkyMiles with this booking!</div>
+      <button class="pay-btn" onclick="confirmBooking()">Confirm & Pay 🔒</button>
+      <div class="secure-note">🔒 Secured by 256-bit SSL encryption</div>
+      <div style="font-size:12px;color:var(--gray);margin-top:12px;line-height:1.5">By confirming, you agree to our Terms of Service and Privacy Policy. Your ticket will be emailed instantly.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════ TICKET PAGE ═══════════════════════════════ -->
+<div class="page" id="ticket-page">
+  <div class="ticket-wrapper">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:48px;margin-bottom:12px">🎉</div>
+      <h2 style="font-family:var(--font-display);font-size:28px;margin-bottom:8px">Booking Confirmed!</h2>
+      <p style="color:var(--gray)">Your e-ticket has been sent to your email. Have a great flight!</p>
+    </div>
+    <div class="ticket">
+      <div class="ticket-header">
+        <div>
+          <div class="ticket-airline">Sky<span style="color:var(--gold)">Book</span></div>
+          <div class="ticket-number" id="t-number">Ticket #TKT1234567</div>
+        </div>
+        <div class="ticket-status">✅ Confirmed</div>
+      </div>
+      <div class="ticket-route">
+        <div class="ticket-airport">
+          <div class="airport-code" id="t-origin">ISB</div>
+          <div class="airport-city" id="t-origin-name">Islamabad</div>
+          <div class="airport-time" id="t-dep-time">08:30</div>
+          <div class="airport-date" id="t-dep-date">15 Jun 2025</div>
+        </div>
+        <div class="ticket-flight-line">
+          <div class="flight-path" style="justify-content:center">
+            <div class="path-dot"></div>
+            <div class="path-line"></div>
+            <div class="path-plane">✈</div>
+            <div class="path-line"></div>
+            <div class="path-dot"></div>
+          </div>
+          <div class="ticket-duration" id="t-duration">3h 15m</div>
+          <div class="ticket-stops-label" id="t-stops">Direct Flight</div>
+        </div>
+        <div class="ticket-airport">
+          <div class="airport-code" id="t-dest">DXB</div>
+          <div class="airport-city" id="t-dest-name">Dubai</div>
+          <div class="airport-time" id="t-arr-time">11:45</div>
+          <div class="airport-date" id="t-arr-date">15 Jun 2025</div>
+        </div>
+      </div>
+      <div class="ticket-details">
+        <div class="td-item"><div class="td-label">Passenger</div><div class="td-val" id="t-pax">Ahmed Khan</div></div>
+        <div class="td-item"><div class="td-label">Flight</div><div class="td-val" id="t-flight">EK 201</div></div>
+        <div class="td-item"><div class="td-label">Class</div><div class="td-val" id="t-class">Economy</div></div>
+        <div class="td-item"><div class="td-label">Seat</div><div class="td-val" id="t-seat">14A</div></div>
+        <div class="td-item"><div class="td-label">PNR</div><div class="td-val" id="t-pnr" style="font-family:monospace;letter-spacing:2px">SKAB12</div></div>
+        <div class="td-item"><div class="td-label">Baggage</div><div class="td-val" id="t-baggage">23kg</div></div>
+        <div class="td-item"><div class="td-label">Total Paid</div><div class="td-val" id="t-total" style="color:var(--gold)">$217</div></div>
+        <div class="td-item"><div class="td-label">Miles Earned</div><div class="td-val" style="color:var(--gold)" id="t-miles">+326 ⭐</div></div>
+      </div>
+      <div class="ticket-qr">
+        <div class="qr-code">
+          <div style="font-size:8px;text-align:center;color:#333">
+            <div style="font-size:20px">▓▒░▓▒░</div>
+            <div>▒░▓░▒▓</div>
+            <div>░▓▒▓░▒</div>
+            <div style="margin-top:4px;font-size:9px">Scan at gate</div>
+          </div>
+        </div>
+        <div class="qr-info">
+          <strong>Your boarding pass is ready!</strong><br><br>
+          ✅ Present this QR code at the airport gate<br>
+          📧 Also sent to your registered email<br>
+          📱 Save to your phone for offline access<br>
+          ⏰ Arrive at least 2 hours before departure
+        </div>
+      </div>
+      <div class="ticket-actions">
+        <button class="ticket-btn primary" onclick="downloadTicket()">📥 Download PDF</button>
+        <button class="ticket-btn secondary" onclick="shareTicket()">📤 Share</button>
+        <button class="ticket-btn secondary" onclick="showPage('dashboard-page');loadDashboard()">📋 My Bookings</button>
+        <button class="ticket-btn secondary" onclick="showPage('home')">🏠 Home</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════ DASHBOARD ═══════════════════════════════ -->
+<div class="page" id="dashboard-page">
+  <div class="dash-layout">
+    <div class="dash-header">
+      <div class="dash-user">
+        <div class="dash-avatar" id="dash-avatar">A</div>
+        <div>
+          <div class="dash-name" id="dash-name">Ahmed Khan</div>
+          <div class="dash-email" id="dash-email">ahmed@skybook.app</div>
+          <div class="dash-tier" id="dash-tier">🏅 Gold Member</div>
+        </div>
+      </div>
+      <div class="dash-miles-box">
+        <div class="dash-miles-num" id="dash-miles">12,450</div>
+        <div class="dash-miles-label">SkyMiles Balance</div>
+        <div style="font-size:12px;color:var(--gray);margin-top:4px" id="dash-miles-next">2,550 miles to Platinum</div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="dash-stat" onclick="switchDashTab('bookings')"><div class="dash-stat-icon">✈</div><div class="dash-stat-num" id="dash-total-flights">3</div><div class="dash-stat-label">Total Flights</div></div>
+      <div class="dash-stat" onclick="switchDashTab('miles')"><div class="dash-stat-icon">⭐</div><div class="dash-stat-num" id="dash-miles2">12,450</div><div class="dash-stat-label">Miles Earned</div></div>
+      <div class="dash-stat" onclick="switchDashTab('bookings')"><div class="dash-stat-icon">💰</div><div class="dash-stat-num" id="dash-spent">$3,240</div><div class="dash-stat-label">Total Spent</div></div>
+      <div class="dash-stat" onclick="searchFlights()"><div class="dash-stat-icon">🔍</div><div class="dash-stat-num">Book</div><div class="dash-stat-label">New Flight</div></div>
+    </div>
+
+    <div class="dash-tabs">
+      <button class="dash-tab active" onclick="switchDashTab('bookings')">My Bookings</button>
+      <button class="dash-tab" onclick="switchDashTab('miles')">Miles & Rewards</button>
+      <button class="dash-tab" onclick="switchDashTab('notifications')">Notifications <span id="notif-count-badge" style="background:var(--red);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px"></span></button>
+      <button class="dash-tab" onclick="switchDashTab('profile')">Profile</button>
+    </div>
+
+    <!-- BOOKINGS TAB -->
+    <div class="dash-section" id="tab-bookings">
+      <div class="dash-section-title">My Bookings <span style="font-size:13px;color:var(--gray);font-weight:400" id="booking-count-label"></span></div>
+      <div class="booking-row booking-row-header" style="font-size:12px">
+        <div>Route</div><div>Date</div><div>Class</div><div>Price</div><div>Status</div><div></div>
+      </div>
+      <div id="booking-rows">
+        <div class="empty-state"><div class="empty-icon">📋</div><div>No bookings yet. Start exploring!</div><button class="nav-btn" onclick="showPage('home')" style="margin-top:16px">Find Flights</button></div>
+      </div>
+    </div>
+
+    <!-- MILES TAB -->
+    <div class="dash-section" id="tab-miles" style="display:none">
+      <div class="dash-section-title">Miles & Rewards</div>
+      <div style="font-size:14px;color:var(--gray);margin-bottom:8px">Progress to next tier</div>
+      <div class="miles-progress"><div class="miles-bar" id="dash-miles-bar" style="width:50%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray);margin-top:6px;margin-bottom:20px">
+        <span>0</span><span id="tier-progress-label">12,450 / 25,000 to Platinum</span><span>Platinum</span>
+      </div>
+      <div class="dash-section-title" style="font-size:15px;margin-bottom:14px">Redeem Rewards</div>
+      <div class="reward-grid" id="reward-grid"></div>
+    </div>
+
+    <!-- NOTIFICATIONS TAB -->
+    <div class="dash-section" id="tab-notifications" style="display:none">
+      <div class="dash-section-title">Notifications <button style="font-size:12px;color:var(--blue);background:none;border:none;cursor:pointer" onclick="markAllRead()">Mark all read</button></div>
+      <div class="notif-list" id="notif-list">
+        <div class="empty-state"><div class="empty-icon">🔔</div><div>No notifications</div></div>
+      </div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div class="dash-section" id="tab-profile" style="display:none">
+      <div class="dash-section-title">My Profile</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="p-name" placeholder="Ahmed Khan"/></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="p-email" placeholder="ahmed@email.com" readonly style="opacity:0.6"/></div>
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="p-phone" placeholder="+92 300 1234567"/></div>
+        <div class="form-group"><label class="form-label">Nationality</label><input class="form-input" id="p-nationality" placeholder="Pakistani"/></div>
+        <div class="form-group"><label class="form-label">Passport / CNIC</label><input class="form-input" id="p-passport" placeholder="AB1234567"/></div>
+        <div class="form-group"><label class="form-label">Date of Birth</label><input class="form-input" id="p-dob" type="date"/></div>
+        <div class="form-group"><label class="form-label">Preferred Class</label>
+          <select class="form-select" id="p-class"><option value="ECONOMY">Economy</option><option value="BUSINESS">Business</option><option value="FIRST">First Class</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Notifications</label>
+          <select class="form-select" id="p-notifs"><option value="true">Enabled</option><option value="false">Disabled</option></select>
+        </div>
+      </div>
+      <button class="nav-btn" style="margin-top:16px;padding:11px 28px" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ MODALS ═══════════════════════════════ -->
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Welcome Back ✈</div>
+      <button class="modal-close" onclick="closeModal('login')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-error" id="login-error"></div>
+      <div class="modal-field"><label class="modal-label">Email Address</label><input class="modal-input" id="login-email" type="email" placeholder="ahmed@example.com" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div class="modal-field">
+        <label class="modal-label">Password</label>
+        <div class="pass-toggle">
+          <input class="modal-input" id="login-pass" type="password" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"/>
+          <span class="toggle-eye" onclick="togglePass('login-pass',this)">👁</span>
+        </div>
+      </div>
+      <div style="text-align:right;margin-bottom:12px"><a onclick="switchModal('login','forgot')" style="font-size:13px;color:var(--blue);cursor:pointer">Forgot password?</a></div>
+      <button class="modal-btn" onclick="doLogin()">Log In</button>
+      <div class="modal-divider">or</div>
+      <div style="text-align:center;font-size:13px;color:var(--gray)">Demo: <strong style="color:var(--blue)">demo@skybook.app</strong> / <strong style="color:var(--blue)">Demo1234!</strong></div>
+      <div class="modal-footer">Don't have an account? <a onclick="switchModal('login','signup')">Sign up free</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div class="modal-overlay" id="modal-signup">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Create Account ✈</div>
+      <button class="modal-close" onclick="closeModal('signup')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-error" id="signup-error"></div>
+      <div class="modal-success" id="signup-success"></div>
+      <div class="modal-field"><label class="modal-label">Full Name *</label><input class="modal-input" id="signup-name" placeholder="Ahmed Khan"/></div>
+      <div class="modal-field"><label class="modal-label">Email Address *</label><input class="modal-input" id="signup-email" type="email" placeholder="ahmed@example.com"/></div>
+      <div class="modal-field"><label class="modal-label">Phone Number</label><input class="modal-input" id="signup-phone" placeholder="+92 300 1234567"/></div>
+      <div class="modal-field">
+        <label class="modal-label">Password * (min 8 chars)</label>
+        <div class="pass-toggle">
+          <input class="modal-input" id="signup-pass" type="password" placeholder="Create a strong password" oninput="checkStrength(this)"/>
+          <span class="toggle-eye" onclick="togglePass('signup-pass',this)">👁</span>
+        </div>
+        <div class="strength-bar"><div class="strength-seg" id="str1"></div><div class="strength-seg" id="str2"></div><div class="strength-seg" id="str3"></div><div class="strength-seg" id="str4"></div></div>
+        <div class="strength-label" id="strength-label">Enter a password</div>
+      </div>
+      <div class="modal-field"><label class="modal-label">Confirm Password *</label><input class="modal-input" id="signup-confirm" type="password" placeholder="Repeat password"/></div>
+      <button class="modal-btn" onclick="doSignup()">Create Account & Get 500 Miles 🎁</button>
+      <div class="modal-footer">Already have an account? <a onclick="switchModal('signup','login')">Log in</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal-overlay" id="modal-forgot">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Reset Password 🔑</div>
+      <button class="modal-close" onclick="closeModal('forgot')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-error" id="forgot-error"></div>
+      <div class="modal-success" id="forgot-success"></div>
+      <p style="font-size:14px;color:var(--gray);margin-bottom:18px">Enter your email address and we'll send you a link to reset your password.</p>
+      <div class="modal-field"><label class="modal-label">Email Address</label><input class="modal-input" id="forgot-email" type="email" placeholder="ahmed@example.com" onkeydown="if(event.key==='Enter')doForgot()"/></div>
+      <button class="modal-btn" onclick="doForgot()">Send Reset Link 📧</button>
+      <div class="modal-footer"><a onclick="switchModal('forgot','login')">← Back to login</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURE MODAL -->
+<div class="modal-overlay" id="modal-feature">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <div class="modal-title" id="feature-modal-title">Feature</div>
+      <button class="modal-close" onclick="closeModal('feature')">✕</button>
+    </div>
+    <div class="modal-body" id="feature-modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ── API CONFIG ───────────────────────────────────────────────────────────────
+const API = 'http://localhost:5000/api';
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+const state = {
+  user: null, token: null,
+  flights: [], filteredFlights: [],
+  selectedFlight: null,
+  extras: {}, extraCost: 0,
+  selectedSeat: '',
+  bookings: [],
+  pax: 1,
+  couponDiscount: 0,
+  couponCode: '',
+  tripType: 'one-way',
+  notifications: [],
+};
+
+// Load saved auth
+const savedToken = localStorage.getItem('sb_token');
+const savedUser = localStorage.getItem('sb_user');
+if(savedToken && savedUser){
+  state.token = savedToken;
+  state.user = JSON.parse(savedUser);
+  updateNavAuth();
+}
+
+// ── AIRPORTS DATA ────────────────────────────────────────────────────────────
+const AIRPORTS = {
+  ISB:{name:"Islamabad International Airport",city:"Islamabad",country:"Pakistan"},
+  KHI:{name:"Jinnah International Airport",city:"Karachi",country:"Pakistan"},
+  LHE:{name:"Allama Iqbal International Airport",city:"Lahore",country:"Pakistan"},
+  PEW:{name:"Bacha Khan International Airport",city:"Peshawar",country:"Pakistan"},
+  DXB:{name:"Dubai International Airport",city:"Dubai",country:"UAE"},
+  AUH:{name:"Abu Dhabi International Airport",city:"Abu Dhabi",country:"UAE"},
+  DOH:{name:"Hamad International Airport",city:"Doha",country:"Qatar"},
+  RUH:{name:"King Khalid Airport",city:"Riyadh",country:"Saudi Arabia"},
+  JED:{name:"King Abdulaziz Airport",city:"Jeddah",country:"Saudi Arabia"},
+  IST:{name:"Istanbul Airport",city:"Istanbul",country:"Turkey"},
+  LHR:{name:"Heathrow Airport",city:"London",country:"UK"},
+  CDG:{name:"Charles de Gaulle Airport",city:"Paris",country:"France"},
+  FRA:{name:"Frankfurt Airport",city:"Frankfurt",country:"Germany"},
+  JFK:{name:"JFK International Airport",city:"New York",country:"USA"},
+  ORD:{name:"O'Hare International Airport",city:"Chicago",country:"USA"},
+  BOM:{name:"Chhatrapati Shivaji Airport",city:"Mumbai",country:"India"},
+  DEL:{name:"Indira Gandhi Airport",city:"Delhi",country:"India"},
+  KUL:{name:"KL International Airport",city:"Kuala Lumpur",country:"Malaysia"},
+  SIN:{name:"Singapore Changi Airport",city:"Singapore",country:"Singapore"},
+  BKK:{name:"Suvarnabhumi Airport",city:"Bangkok",country:"Thailand"},
+  NRT:{name:"Narita International Airport",city:"Tokyo",country:"Japan"},
+  SYD:{name:"Sydney Kingsford Smith Airport",city:"Sydney",country:"Australia"},
+  CAI:{name:"Cairo International Airport",city:"Cairo",country:"Egypt"},
+  NBO:{name:"JKIA Airport",city:"Nairobi",country:"Kenya"},
+};
+
+// ── PAGE NAVIGATION ──────────────────────────────────────────────────────────
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(el){el.classList.add('active');window.scrollTo(0,0);}
+}
+
+// ── NAV AUTH ─────────────────────────────────────────────────────────────────
+function updateNavAuth(){
+  const btns = document.getElementById('nav-auth-btns');
+  const userArea = document.getElementById('nav-user-area');
+  if(state.user){
+    btns.style.display = 'none';
+    userArea.style.display = 'flex';
+    document.getElementById('nav-avatar').textContent = state.user.full_name?.[0]?.toUpperCase()||'U';
+    loadNotifications();
+  } else {
+    btns.style.display = 'flex';
+    userArea.style.display = 'none';
+  }
+}
+
+function logout(){
+  state.user = null; state.token = null;
+  localStorage.removeItem('sb_token'); localStorage.removeItem('sb_user');
+  updateNavAuth();
+  showPage('home');
+  showToast('Logged out successfully','info');
+}
+
+// ── MODALS ────────────────────────────────────────────────────────────────────
+function openModal(name){
+  document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));
+  const modal = document.getElementById('modal-'+name);
+  if(modal) modal.classList.add('open');
+}
+function closeModal(name){document.getElementById('modal-'+name)?.classList.remove('open')}
+function switchModal(from,to){closeModal(from);openModal(to)}
+document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+  overlay.addEventListener('click',e=>{if(e.target===overlay){overlay.classList.remove('open')}});
+});
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+async function doLogin(){
+  clearModalErrors('login');
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if(!email||!pass){showModalError('login','Please enter email and password');return;}
+  showLoading('Logging you in...');
+  try{
+    const r = await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+    const d = await r.json();
+    hideLoading();
+    if(!r.ok){showModalError('login',d.error||'Login failed');return;}
+    state.token = d.token; state.user = d.user;
+    localStorage.setItem('sb_token',d.token);
+    localStorage.setItem('sb_user',JSON.stringify(d.user));
+    closeModal('login');
+    updateNavAuth();
+    showToast(`Welcome back, ${d.user.full_name}! 👋`,'success');
+  } catch(e){
+    hideLoading();
+    // Demo mode fallback
+    if(email==='demo@skybook.app'&&pass==='Demo1234!'){
+      const demoUser={id:'demo',full_name:'Ahmed Khan',email,loyalty_miles:12450,tier:'Gold',total_flights:8};
+      state.token='demo-token';state.user=demoUser;
+      localStorage.setItem('sb_token','demo-token');
+      localStorage.setItem('sb_user',JSON.stringify(demoUser));
+      closeModal('login');updateNavAuth();
+      showToast('Welcome back, Ahmed! 👋 (Demo Mode)','success');
+    } else {
+      showModalError('login','Cannot connect to server. Use demo@skybook.app / Demo1234!');
+    }
+  }
+}
+
+async function doSignup(){
+  clearModalErrors('signup');
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const phone = document.getElementById('signup-phone').value.trim();
+  const pass = document.getElementById('signup-pass').value;
+  const confirm = document.getElementById('signup-confirm').value;
+  if(!name||!email||!pass){showModalError('signup','Please fill all required fields');return;}
+  if(pass!==confirm){showModalError('signup','Passwords do not match');return;}
+  if(pass.length<8){showModalError('signup','Password must be at least 8 characters');return;}
+  showLoading('Creating your account...');
+  try{
+    const r = await fetch(`${API}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({full_name:name,email,phone,password:pass})});
+    const d = await r.json();
+    hideLoading();
+    if(!r.ok){showModalError('signup',d.error||'Registration failed');return;}
+    state.token = d.token; state.user = d.user;
+    localStorage.setItem('sb_token',d.token);
+    localStorage.setItem('sb_user',JSON.stringify(d.user));
+    closeModal('signup');updateNavAuth();
+    showToast(`🎉 Welcome to SkyBook, ${name}! You earned 500 bonus miles!`,'success');
+  } catch(e){
+    hideLoading();
+    showModalError('signup','Cannot connect to server. Please ensure the backend is running.');
+  }
+}
+
+async function doForgot(){
+  clearModalErrors('forgot');
+  const email = document.getElementById('forgot-email').value.trim();
+  if(!email){showModalError('forgot','Please enter your email');return;}
+  showLoading('Sending reset email...');
+  try{
+    const r = await fetch(`${API}/auth/forgot-password`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const d = await r.json();
+    hideLoading();
+    document.getElementById('forgot-success').style.display='block';
+    document.getElementById('forgot-success').textContent='✅ '+d.message;
+  } catch(e){
+    hideLoading();
+    document.getElementById('forgot-success').style.display='block';
+    document.getElementById('forgot-success').textContent='✅ If this email is registered, a reset link has been sent.';
+  }
+}
+
+function togglePass(id,btn){
+  const inp=document.getElementById(id);
+  inp.type=inp.type==='password'?'text':'password';
+  btn.textContent=inp.type==='password'?'👁':'🙈';
+}
+
+function checkStrength(inp){
+  const v=inp.value;
+  let s=0;
+  if(v.length>=8)s++;
+  if(/[A-Z]/.test(v))s++;
+  if(/[0-9]/.test(v))s++;
+  if(/[^A-Za-z0-9]/.test(v))s++;
+  const colors=['','#ff4757','#ffa502','#2ed573','#00c851'];
+  const labels=['','Weak','Fair','Good','Strong'];
+  for(let i=1;i<=4;i++){
+    const el=document.getElementById('str'+i);
+    el.style.background=i<=s?colors[s]:''  ;
+    el.style.background=i<=s?colors[s]:'rgba(255,255,255,0.08)';
+  }
+  document.getElementById('strength-label').textContent=labels[s]||'Enter password';
+  document.getElementById('strength-label').style.color=colors[s]||'var(--gray)';
+}
+
+function showModalError(name,msg){
+  const el=document.getElementById(name+'-error');
+  if(el){el.style.display='block';el.textContent=msg;}
+}
+function clearModalErrors(name){
+  const el=document.getElementById(name+'-error');
+  if(el)el.style.display='none';
+  const s=document.getElementById(name+'-success');
+  if(s)s.style.display='none';
+}
+
+// ── AUTOCOMPLETE ──────────────────────────────────────────────────────────────
+function showAutocomplete(inp,listId){
+  const query=inp.value.toLowerCase();
+  const list=document.getElementById(listId);
+  if(!query||query.length<1){list.classList.remove('open');return;}
+  const matches=Object.entries(AIRPORTS).filter(([code,info])=>
+    code.toLowerCase().includes(query)||info.city.toLowerCase().includes(query)||info.country.toLowerCase().includes(query)
+  ).slice(0,6);
+  if(!matches.length){list.classList.remove('open');return;}
+  list.innerHTML=matches.map(([code,info])=>`
+    <div class="autocomplete-item" onmousedown="selectAirport(event,'${code}','${info.city}','${inp.id}','${listId}')">
+      <span class="auto-code">${code}</span>
+      <span class="auto-city">${info.city}</span>
+      <span class="auto-country">${info.country}</span>
+    </div>`).join('');
+  list.classList.add('open');
+}
+function selectAirport(e,code,city,inputId,listId){
+  e.preventDefault();
+  document.getElementById(inputId).value=`${city} (${code})`;
+  document.getElementById(inputId).dataset.code=code;
+  document.getElementById(listId).classList.remove('open');
+}
+function hideAC(listId){document.getElementById(listId)?.classList.remove('open')}
+
+function getAirportCode(inputId){
+  const inp=document.getElementById(inputId);
+  if(inp.dataset.code)return inp.dataset.code;
+  const val=inp.value.trim().toUpperCase();
+  const match=val.match(/\(([A-Z]{3})\)/);
+  if(match)return match[1];
+  if(val.length===3&&AIRPORTS[val])return val;
+  const found=Object.entries(AIRPORTS).find(([code,info])=>info.city.toUpperCase()===val);
+  return found?found[0]:val.slice(0,3);
+}
+
+// ── SEARCH ────────────────────────────────────────────────────────────────────
+function setTripType(btn,type){
+  document.querySelectorAll('.trip-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  state.tripType=type;
+  document.getElementById('return-field').style.display=type==='round-trip'?'flex':'none';
+}
+
+function swapAirports(){
+  const o=document.getElementById('s-origin'),d=document.getElementById('s-dest');
+  [o.value,d.value]=[d.value,o.value];
+  [o.dataset.code,d.dataset.code]=[d.dataset.code,o.dataset.code];
+}
+
+function changePax(delta){
+  state.pax=Math.max(1,Math.min(9,state.pax+delta));
+  document.getElementById('pax-display').textContent=state.pax;
+}
+
+async function searchFlights(){
+  const origin=getAirportCode('s-origin');
+  const dest=getAirportCode('s-dest');
+  const date=document.getElementById('s-date').value;
+  const cabin=document.getElementById('s-class').value;
+  if(!origin||!dest){showToast('Please enter origin and destination','error');return;}
+  if(origin===dest){showToast('Origin and destination cannot be the same','error');return;}
+  if(!date){showToast('Please select a departure date','error');return;}
+  document.getElementById('s2-origin').value=origin;
+  document.getElementById('s2-dest').value=dest;
+  document.getElementById('s2-date').value=date;
+  document.getElementById('s2-class').value=cabin;
+  document.getElementById('route-pill').textContent=`✈ ${origin} → ${dest}`;
+  showPage('flights-page');
+  await loadFlights(origin,dest,date,cabin);
+}
+
+async function searchFlights2(){
+  const origin=document.getElementById('s2-origin').value.toUpperCase().trim();
+  const dest=document.getElementById('s2-dest').value.toUpperCase().trim();
+  const date=document.getElementById('s2-date').value;
+  const cabin=document.getElementById('s2-class').value;
+  document.getElementById('route-pill').textContent=`✈ ${origin} → ${dest}`;
+  await loadFlights(origin,dest,date,cabin);
+}
+
+async function quickSearch(origin,dest){
+  document.getElementById('s-origin').value=`${AIRPORTS[origin]?.city||origin} (${origin})`;
+  document.getElementById('s-origin').dataset.code=origin;
+  document.getElementById('s-dest').value=`${AIRPORTS[dest]?.city||dest} (${dest})`;
+  document.getElementById('s-dest').dataset.code=dest;
+  const d=new Date();d.setDate(d.getDate()+7);
+  const dateStr=d.toISOString().split('T')[0];
+  document.getElementById('s-date').value=dateStr;
+  document.getElementById('s2-origin').value=origin;
+  document.getElementById('s2-dest').value=dest;
+  document.getElementById('s2-date').value=dateStr;
+  document.getElementById('route-pill').textContent=`✈ ${origin} → ${dest}`;
+  showPage('flights-page');
+  await loadFlights(origin,dest,dateStr,'ECONOMY');
+}
+
+function searchByAirline(code){
+  document.getElementById('s2-origin').value='ISB';
+  document.getElementById('s2-dest').value='DXB';
+  const d=new Date();d.setDate(d.getDate()+7);
+  document.getElementById('s2-date').value=d.toISOString().split('T')[0];
+  showPage('flights-page');
+  loadFlights('ISB','DXB',d.toISOString().split('T')[0],'ECONOMY',code);
+}
+
+function applyDeal(code,origin,dest){
+  document.getElementById('s-origin').value=`${AIRPORTS[origin]?.city||origin} (${origin})`;
+  document.getElementById('s-origin').dataset.code=origin;
+  document.getElementById('s-dest').value=`${AIRPORTS[dest]?.city||dest} (${dest})`;
+  document.getElementById('s-dest').dataset.code=dest;
+  const d=new Date();d.setDate(d.getDate()+14);
+  document.getElementById('s-date').value=d.toISOString().split('T')[0];
+  quickSearch(origin,dest);
+  setTimeout(()=>{
+    document.getElementById('coupon-input').value=code;
+    showToast(`Promo code ${code} will be applied at checkout!`,'info');
+  },1500);
+}
+
+async function loadFlights(origin,dest,date,cabin='ECONOMY',filterAirline=null){
+  showFlightSkeleton();
+  document.getElementById('flight-count-label').textContent='Searching best fares...';
+  try{
+    const url=`${API}/flights/search?origin=${origin}&destination=${dest}&date=${date}&cabin=${cabin}&passengers=${state.pax}`;
+    const r=await fetch(url);
+    const d=await r.json();
+    state.flights=d.flights||[];
+  } catch(e){
+    // Generate mock flights if API unavailable
+    state.flights=generateMockFlights(origin,dest,date,cabin);
+  }
+  if(filterAirline){state.flights=state.flights.filter(f=>f.airline_code===filterAirline)}
+  state.filteredFlights=[...state.flights];
+  renderFlights();
+}
+
+function generateMockFlights(origin,dest,date,cabin){
+  const airlines=[
+    {code:'EK',name:'Emirates',rating:4.7},{code:'QR',name:'Qatar Airways',rating:4.6},
+    {code:'TK',name:'Turkish Airlines',rating:4.4},{code:'PK',name:'PIA',rating:3.8},
+    {code:'FZ',name:'Flydubai',rating:4.1},{code:'EY',name:'Etihad Airways',rating:4.5}
+  ];
+  const multiplier=cabin==='BUSINESS'?2.8:cabin==='FIRST'?5.5:1;
+  return airlines.slice(0,4+Math.floor(Math.random()*3)).map((al,i)=>{
+    const basePrice=Math.round((150+Math.random()*400)*multiplier);
+    const taxes=Math.round(basePrice*0.12);
+    const depH=5+i*3+Math.floor(Math.random()*2);
+    const durMin=120+Math.floor(Math.random()*400);
+    const depTime=`${date}T${String(depH).padStart(2,'0')}:${Math.random()>0.5?'30':'00'}:00`;
+    const arrTime=new Date(new Date(depTime).getTime()+durMin*60000).toISOString();
+    return {
+      id:'f'+i,flight_number:`${al.code}${200+i*11}`,airline_code:al.code,airline_name:al.name,
+      airline_rating:al.rating,origin,destination:dest,
+      origin_city:AIRPORTS[origin]?.city||origin,destination_city:AIRPORTS[dest]?.city||dest,
+      departure_time:depTime,arrival_time:arrTime,duration_minutes:durMin,
+      duration_formatted:`${Math.floor(durMin/60)}h ${durMin%60}m`,
+      stops:Math.random()>0.6?1:0,cabin_class:cabin==='ECONOMY'?'Economy':cabin==='BUSINESS'?'Business':'First Class',
+      cabin_code:cabin,base_price:basePrice,taxes,total_price:basePrice+taxes,currency:'USD',
+      seats_available:Math.floor(Math.random()*30)+2,baggage_allowance:'23kg',
+      meal_included:cabin!=='ECONOMY',refundable:Math.random()>0.5,wifi:Math.random()>0.4,
+      on_time_performance:`${75+Math.floor(Math.random()*23)}%`,
+    };
+  }).sort((a,b)=>a.total_price-b.total_price);
+}
+
+function showFlightSkeleton(){
+  document.getElementById('flights-list').innerHTML=
+    '<div class="skeleton skeleton-card"></div>'.repeat(4);
+}
+
+function renderFlights(){
+  const list=document.getElementById('flights-list');
+  const flights=state.filteredFlights;
+  document.getElementById('flight-count-label').textContent=`${flights.length} flight${flights.length!==1?'s':''} found`;
+  if(!flights.length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon">✈</div><div>No flights found for this route. Try different dates or filters.</div></div>`;
+    return;
+  }
+  list.innerHTML=flights.map((f,i)=>`
+    <div class="flight-card" id="fc-${f.id}" onclick="selectFlight('${f.id}')">
+      <div class="flight-top">
+        <div class="airline-info">
+          <div class="airline-logo">${f.airline_code[0]}</div>
+          <div><div class="airline-name">${f.airline_name}</div><div class="airline-num">${f.flight_number} • ⭐ ${f.airline_rating}</div></div>
+        </div>
+        <div class="flight-tags">
+          <span class="flight-tag tag-class">${f.cabin_class}</span>
+          ${f.refundable?'<span class="flight-tag tag-refund">Refundable</span>':''}
+          ${f.wifi?'<span class="flight-tag tag-wifi">WiFi</span>':''}
+          ${f.meal_included?'<span class="flight-tag tag-meal">Meal</span>':''}
+        </div>
+      </div>
+      <div style="display:flex;align-items:center">
+        <div class="flight-middle" style="flex:1;display:flex;align-items:center;gap:0">
+          <div class="route-time"><div class="time">${f.departure_time.slice(11,16)}</div><div class="iata">${f.origin}</div></div>
+          <div class="route-line">
+            <div class="route-duration">${f.duration_formatted}</div>
+            <div class="route-bar"><div class="route-plane">✈</div></div>
+            <div class="route-stops ${f.stops===0?'nonstop':''}">${f.stops===0?'✅ Non-stop':`🔄 ${f.stops} stop`}</div>
+          </div>
+          <div class="route-time"><div class="time">${f.arrival_time.slice(11,16)}</div><div class="iata">${f.destination}</div></div>
+        </div>
+        <div class="flight-right">
+          <div>
+            ${f.seats_available<=5?`<div class="seats-left">Only ${f.seats_available} left!</div>`:''}
+            <div class="on-time">🟢 ${f.on_time_performance} on-time</div>
+          </div>
+          <div class="flight-price-section">
+            <div class="flight-price">$${f.total_price}</div>
+            <div class="flight-price-sub">per person • incl. taxes</div>
+            <button class="book-flight-btn" onclick="event.stopPropagation();openBooking('${f.id}')">Select →</button>
+          </div>
+        </div>
+      </div>
+      <button class="expand-btn" onclick="event.stopPropagation();toggleDetails('${f.id}')">▼ Flight details</button>
+      <div class="flight-details-row" id="fd-${f.id}">
+        <div class="fd-item"><strong>Baggage</strong>${f.baggage_allowance} included</div>
+        <div class="fd-item"><strong>On-Time</strong>${f.on_time_performance}</div>
+        <div class="fd-item"><strong>Aircraft</strong>Boeing 777</div>
+        <div class="fd-item"><strong>Base Fare</strong>$${f.base_price}</div>
+        <div class="fd-item"><strong>Taxes</strong>$${f.taxes}</div>
+        <div class="fd-item"><strong>Meal</strong>${f.meal_included?'Included':'Not included'}</div>
+        <div class="fd-item"><strong>WiFi</strong>${f.wifi?'Available':'Not available'}</div>
+        <div class="fd-item"><strong>Refundable</strong>${f.refundable?'Yes (conditions apply)':'No'}</div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleDetails(id){
+  const el=document.getElementById('fd-'+id);
+  el.classList.toggle('open');
+}
+
+function selectFlight(id){
+  document.querySelectorAll('.flight-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('fc-'+id)?.classList.add('selected');
+  state.selectedFlight=state.filteredFlights.find(f=>f.id===id)||state.flights.find(f=>f.id===id);
+}
+
+// ── FILTERS ───────────────────────────────────────────────────────────────────
+function applyFilters(){
+  const maxPrice=parseInt(document.getElementById('price-filter').value);
+  const direct=document.getElementById('f-direct').checked;
+  const stop1=document.getElementById('f-1stop').checked;
+  const stop2=document.getElementById('f-2stop').checked;
+  const refundOnly=document.getElementById('f-refund').checked;
+  const wifiOnly=document.getElementById('f-wifi').checked;
+  const mealOnly=document.getElementById('f-meal').checked;
+  const morning=document.getElementById('f-morning').checked;
+  const afternoon=document.getElementById('f-afternoon').checked;
+  const evening=document.getElementById('f-evening').checked;
+  const night=document.getElementById('f-night').checked;
+
+  const checkedAirlines=[];
+  document.querySelectorAll('#airline-filters input[type=checkbox]:checked').forEach(cb=>{
+    if(cb.value)checkedAirlines.push(cb.value);
+  });
+
+  state.filteredFlights=state.flights.filter(f=>{
+    if(f.total_price>maxPrice)return false;
+    const stops=f.stops;
+    if(!direct&&stops===0)return false;
+    if(!stop1&&stops===1)return false;
+    if(!stop2&&stops>=2)return false;
+    if(refundOnly&&!f.refundable)return false;
+    if(wifiOnly&&!f.wifi)return false;
+    if(mealOnly&&!f.meal_included)return false;
+    if(checkedAirlines.length&&!checkedAirlines.includes(f.airline_code))return false;
+    const h=parseInt(f.departure_time.slice(11,13));
+    const inMorning=h>=6&&h<12;
+    const inAfternoon=h>=12&&h<18;
+    const inEvening=h>=18&&h<24;
+    const inNight=h<6;
+    if(!morning&&inMorning)return false;
+    if(!afternoon&&inAfternoon)return false;
+    if(!evening&&inEvening)return false;
+    if(!night&&inNight)return false;
+    return true;
+  });
+  renderFlights();
+}
+
+function resetFilters(){
+  document.getElementById('price-filter').value=2000;
+  document.getElementById('price-max-label').textContent='$2000';
+  document.querySelectorAll('#airline-filters input').forEach(cb=>cb.checked=true);
+  ['f-direct','f-1stop','f-2stop','f-morning','f-afternoon','f-evening','f-night','f-refund','f-wifi','f-meal']
+    .forEach(id=>{const el=document.getElementById(id);if(el){el.checked=id!=='f-refund'&&id!=='f-wifi'&&id!=='f-meal';}});
+  state.filteredFlights=[...state.flights];
+  renderFlights();
+}
+
+function updatePriceFilter(el){
+  document.getElementById('price-max-label').textContent='$'+el.value;
+  applyFilters();
+}
+
+function sortFlights(by,btn){
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const flights=[...state.filteredFlights];
+  if(by==='price')flights.sort((a,b)=>a.total_price-b.total_price);
+  else if(by==='duration')flights.sort((a,b)=>a.duration_minutes-b.duration_minutes);
+  else if(by==='departure')flights.sort((a,b)=>new Date(a.departure_time)-new Date(b.departure_time));
+  else if(by==='arrival')flights.sort((a,b)=>new Date(a.arrival_time)-new Date(b.arrival_time));
+  else if(by==='rating')flights.sort((a,b)=>b.airline_rating-a.airline_rating);
+  state.filteredFlights=flights;
+  renderFlights();
+}
+
+// ── BOOKING ───────────────────────────────────────────────────────────────────
+function openBooking(flightId){
+  if(!state.token){
+    showToast('Please log in to book a flight','info');
+    openModal('login');
+    return;
+  }
+  state.selectedFlight=state.flights.find(f=>f.id===flightId)||state.filteredFlights.find(f=>f.id===flightId);
+  if(!state.selectedFlight)return;
+  const f=state.selectedFlight;
+  state.extras={};state.extraCost=0;state.couponDiscount=0;state.couponCode='';
+  document.querySelectorAll('.extra-item').forEach(e=>e.classList.remove('active'));
+  document.getElementById('coupon-input').value='';
+  document.getElementById('coupon-success').style.display='none';
+  document.getElementById('sum-route').textContent=`${f.origin} → ${f.destination}`;
+  document.getElementById('sum-details').textContent=`${f.airline_name} ${f.flight_number} • ${f.cabin_class}`;
+  document.getElementById('sum-base').textContent=`$${f.base_price}`;
+  document.getElementById('sum-taxes').textContent=`$${f.taxes}`;
+  document.getElementById('sum-extras').textContent='$0';
+  document.getElementById('sum-total').textContent=`$${f.total_price}`;
+  document.getElementById('miles-earn').textContent=Math.round(f.total_price*1.5);
+  document.getElementById('discount-line').style.display='none';
+  if(state.user){
+    document.getElementById('b-email').value=state.user.email||'';
+    document.getElementById('b-fname').value=state.user.full_name?.split(' ')[0]||'';
+    document.getElementById('b-lname').value=state.user.full_name?.split(' ').slice(1).join(' ')||'';
+  }
+  generateSeats();
+  showPage('booking-page');
+}
+
+function generateSeats(){
+  const grid=document.getElementById('seats-grid');
+  const taken=[3,7,12,15,19,22,28,31,35,38,42,45,2,17,29,8,24,39];
+  const premium=[1,2,3,4,5,6,7,8,9,10,11,12];
+  let html='<div class="seat-section-label">🥇 Business / Premium</div>';
+  for(let i=1;i<=48;i++){
+    if(i===13)html+='<div class="seat-section-label">🪑 Economy</div>';
+    const row=Math.ceil(i/6),col=i%6||6;
+    const label=row+String.fromCharCode(64+col);
+    const isTaken=taken.includes(i);
+    const isPremium=premium.includes(i)&&!isTaken;
+    const cls=isTaken?'taken':isPremium?'premium':'';
+    const clickFn=isTaken?'':`onclick="selectSeat(this,'${label}',${isPremium})"`;
+    html+=`<div class="seat ${cls}" id="seat-${i}" ${clickFn}>${label}</div>`;
+  }
+  grid.innerHTML=html;
+}
+
+function selectSeat(el,label,isPremium){
+  document.querySelectorAll('.seat').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  state.selectedSeat=label;
+  if(isPremium){
+    state.extras.premium_seat=true;
+    updateSummaryTotal();
+    showToast(`Premium seat ${label} selected (+$25 extra legroom)!`,'info');
+  } else {
+    if(state.extras.premium_seat){delete state.extras.premium_seat;updateSummaryTotal();}
+    showToast(`Seat ${label} selected!`,'info');
+  }
+}
+
+function toggleExtra(el,key,price){
+  el.classList.toggle('active');
+  const prices={baggage:45,meal:18,insurance:25,lounge:35,fast_track:15,priority:20,premium_seat:25};
+  state.extras[key]=el.classList.contains('active');
+  updateSummaryTotal();
+}
+
+function updateSummaryTotal(){
+  const prices={baggage:45,meal:18,insurance:25,lounge:35,fast_track:15,priority:20,premium_seat:25};
+  state.extraCost=Object.entries(state.extras).reduce((s,[k,v])=>v?s+(prices[k]||0):s,0);
+  document.getElementById('sum-extras').textContent='$'+state.extraCost;
+  if(state.selectedFlight){
+    const base=state.selectedFlight.total_price+state.extraCost;
+    const after=Math.round(base*(1-state.couponDiscount));
+    document.getElementById('sum-total').textContent='$'+after;
+    document.getElementById('miles-earn').textContent=Math.round(after*1.5);
+    if(state.couponDiscount>0){
+      document.getElementById('discount-line').style.display='flex';
+      document.getElementById('sum-discount').textContent='-$'+Math.round(base*state.couponDiscount);
+    }
+  }
+}
+
+async function applyCoupon(){
+  const code=document.getElementById('coupon-input').value.trim().toUpperCase();
+  if(!code)return;
+  if(!state.selectedFlight)return;
+  const amount=state.selectedFlight.total_price+state.extraCost;
+  try{
+    const r=await fetch(`${API}/payments/validate-coupon`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,amount})});
+    const d=await r.json();
+    if(!r.ok){showToast(d.error||'Invalid code','error');return;}
+    state.couponDiscount=d.discount_percent/100;
+    state.couponCode=code;
+    document.getElementById('coupon-success').style.display='block';
+    document.getElementById('coupon-success').textContent=`✅ ${d.description} — You save $${d.discount_amount}!`;
+    updateSummaryTotal();
+    showToast(`Code ${code} applied! You save $${d.discount_amount}`,'success');
+  }catch(e){
+    const staticCoupons={'SUMMER30':0.30,'EID25':0.25,'BIZ20':0.20,'WKND15':0.15,'STUDENT20':0.20,'COUPLE10':0.10,'WELCOME10':0.10};
+    if(staticCoupons[code]){
+      state.couponDiscount=staticCoupons[code];
+      state.couponCode=code;
+      const save=Math.round(amount*state.couponDiscount);
+      document.getElementById('coupon-success').style.display='block';
+      document.getElementById('coupon-success').textContent=`✅ Code applied! You save $${save}!`;
+      updateSummaryTotal();
+      showToast(`Code ${code} applied!`,'success');
+    }else{
+      showToast('Invalid promo code','error');
+    }
+  }
+}
+
+function selectPayment(el,method){
+  document.querySelectorAll('.pay-method').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('card-fields').className='card-fields'+(method==='card'?' show':'');
+}
+
+async function confirmBooking(){
+  if(!state.token){openModal('login');return;}
+  const fname=document.getElementById('b-fname').value.trim();
+  const lname=document.getElementById('b-lname').value.trim();
+  const email=document.getElementById('b-email').value.trim();
+  const passport=document.getElementById('b-passport').value.trim();
+  if(!fname||!lname){showToast('Please enter passenger name','error');return;}
+  if(!email){showToast('Please enter email address','error');return;}
+  if(!passport){showToast('Please enter passport/CNIC','error');return;}
+  if(!state.selectedFlight){showToast('No flight selected','error');return;}
+  showLoading('Processing your booking...');
+  const f=state.selectedFlight;
+  const pnr='SK'+Math.random().toString(36).toUpperCase().slice(2,8);
+  const totalPrice=Math.round((f.total_price+state.extraCost)*(1-state.couponDiscount));
+  const milesEarned=Math.round(totalPrice*1.5);
+  try{
+    await fetch(`${API}/bookings`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${state.token}`},
+      body:JSON.stringify({flight:f,passengers:[{first_name:fname,last_name:lname,passport,email}],seat:state.selectedSeat,extras:state.extras,payment_method:'card',coupon:state.couponCode})
+    });
+  }catch(e){}
+  hideLoading();
+  // Update ticket display
+  document.getElementById('t-pax').textContent=`${fname} ${lname}`;
+  document.getElementById('t-origin').textContent=f.origin;
+  document.getElementById('t-dest').textContent=f.destination;
+  document.getElementById('t-origin-name').textContent=f.origin_city||AIRPORTS[f.origin]?.city||f.origin;
+  document.getElementById('t-dest-name').textContent=f.destination_city||AIRPORTS[f.destination]?.city||f.destination;
+  document.getElementById('t-dep-time').textContent=f.departure_time.slice(11,16);
+  document.getElementById('t-arr-time').textContent=f.arrival_time.slice(11,16);
+  document.getElementById('t-dep-date').textContent=formatDate(f.departure_time);
+  document.getElementById('t-arr-date').textContent=formatDate(f.arrival_time);
+  document.getElementById('t-flight').textContent=f.flight_number;
+  document.getElementById('t-class').textContent=f.cabin_class;
+  document.getElementById('t-seat').textContent=state.selectedSeat||'14A';
+  document.getElementById('t-pnr').textContent=pnr;
+  document.getElementById('t-number').textContent=`Ticket #TKT${Date.now().toString().slice(-8)}`;
+  document.getElementById('t-duration').textContent=f.duration_formatted;
+  document.getElementById('t-stops').textContent=f.stops===0?'Direct Flight':`${f.stops} Stop(s)`;
+  document.getElementById('t-total').textContent=`$${totalPrice}`;
+  document.getElementById('t-miles').textContent=`+${milesEarned} ⭐`;
+  if(state.user){
+    state.user.loyalty_miles=(state.user.loyalty_miles||0)+milesEarned;
+    localStorage.setItem('sb_user',JSON.stringify(state.user));
+  }
+  showToast('🎉 Booking confirmed! Your e-ticket has been sent to your email.','success');
+  showPage('ticket-page');
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+async function loadDashboard(){
+  if(!state.user){openModal('login');return;}
+  const u=state.user;
+  document.getElementById('dash-name').textContent=u.full_name||'Traveler';
+  document.getElementById('dash-email').textContent=u.email||'';
+  document.getElementById('dash-avatar').textContent=u.full_name?.[0]?.toUpperCase()||'U';
+  const miles=u.loyalty_miles||0;
+  document.getElementById('dash-miles').textContent=miles.toLocaleString();
+  document.getElementById('dash-miles2').textContent=miles.toLocaleString();
+  document.getElementById('dash-spent').textContent=`$${(u.total_spent||0).toLocaleString()}`;
+  const tier=u.tier||'Silver';
+  document.getElementById('dash-tier').textContent=`${tier==='Platinum'?'💎':tier==='Gold'?'🏅':'🥈'} ${tier} Member`;
+  document.getElementById('dash-total-flights').textContent=u.total_flights||0;
+  const nextMiles=tier==='Gold'?25000:tier==='Silver'?10000:50000;
+  const toNext=Math.max(0,nextMiles-miles);
+  document.getElementById('dash-miles-next').textContent=`${toNext.toLocaleString()} miles to ${tier==='Platinum'?'Platinum (Max)':'next tier'}`;
+  document.getElementById('tier-progress-label').textContent=`${miles.toLocaleString()} / ${nextMiles.toLocaleString()} to Platinum`;
+  const pct=Math.min(100,(miles/nextMiles)*100);
+  document.getElementById('dash-miles-bar').style.width=pct+'%';
+  document.getElementById('p-name').value=u.full_name||'';
+  document.getElementById('p-email').value=u.email||'';
+  document.getElementById('p-phone').value=u.phone||'';
+  document.getElementById('p-nationality').value=u.nationality||'';
+  document.getElementById('p-passport').value=u.passport||'';
+  renderRewards(miles);
+  await loadBookingRows();
+  await loadNotifications();
+}
+
+async function loadBookingRows(){
+  try{
+    const r=await fetch(`${API}/bookings`,{headers:{'Authorization':`Bearer ${state.token}`}});
+    const d=await r.json();
+    state.bookings=d;
+  }catch(e){state.bookings=[];}
+  const demo=[
+    {pnr:'SKDEMO1',route:'ISB → DXB',date:'15 Jun 2025',cabin_class:'Economy',grand_total:189,status:'confirmed'},
+    {pnr:'SKDEMO2',route:'DXB → LHR',date:'20 Jun 2025',cabin_class:'Business',grand_total:780,status:'confirmed'},
+    {pnr:'SKDEMO3',route:'LHR → ISB',date:'01 Jul 2025',cabin_class:'Economy',grand_total:520,status:'pending'},
+  ];
+  const all=[...demo,...state.bookings.map(b=>({pnr:b.pnr||'SK???',route:`${b.flight?.origin}→${b.flight?.destination}`,date:formatDate(b.booked_at),cabin_class:b.flight?.cabin_class||'Economy',grand_total:b.grand_total||0,status:b.status}))];
+  document.getElementById('booking-count-label').textContent=`(${all.length} bookings)`;
+  document.getElementById('booking-rows').innerHTML=all.map(b=>`
+    <div class="booking-row">
+      <div><div class="booking-route">${b.route}</div><div class="booking-pnr">${b.pnr}</div></div>
+      <div style="color:var(--gray)">${b.date}</div>
+      <div>${b.cabin_class}</div>
+      <div style="font-weight:600">$${b.grand_total}</div>
+      <div><span class="status-badge ${b.status}">${b.status}</span></div>
+      <div>${b.status==='confirmed'?`<button class="cancel-booking-btn" onclick="cancelBooking('${b.pnr}')">Cancel</button>`:''}</div>
+    </div>`).join('');
+}
+
+function renderRewards(miles){
+  const rewards=[
+    {name:'Free Checked Bag',cost:2000,icon:'🧳'},
+    {name:'Seat Upgrade',cost:5000,icon:'⬆'},
+    {name:'Lounge Access',cost:8000,icon:'🛋'},
+    {name:'Business Upgrade',cost:20000,icon:'💼'},
+    {name:'Free Short Haul',cost:30000,icon:'✈'},
+    {name:'Free Long Haul',cost:60000,icon:'🌍'},
+  ];
+  document.getElementById('reward-grid').innerHTML=rewards.map(r=>`
+    <div class="reward-item ${miles<r.cost?'locked':''}" onclick="${miles>=r.cost?`redeemReward('${r.name}',${r.cost})`:'showToast(\'Earn more miles to unlock this reward!\',\'info\')'}">
+      <div class="reward-icon">${r.icon}</div>
+      <div class="reward-name">${r.name}</div>
+      <div class="reward-cost">${r.cost.toLocaleString()} miles${miles<r.cost?` (need ${(r.cost-miles).toLocaleString()} more)`:''}</div>
+    </div>`).join('');
+}
+
+function redeemReward(name,cost){
+  showToast(`🎉 ${name} redeemed! Check your email for confirmation.`,'success');
+  if(state.user){state.user.loyalty_miles=Math.max(0,(state.user.loyalty_miles||0)-cost);renderRewards(state.user.loyalty_miles);}
+}
+
+function cancelBooking(pnr){
+  if(!confirm(`Cancel booking ${pnr}? You'll receive up to 85% refund.`))return;
+  showToast('Booking cancelled. Refund will be processed in 5-7 business days.','info');
+  loadDashboard();
+}
+
+function switchDashTab(tab){
+  document.querySelectorAll('[id^=tab-]').forEach(el=>el.style.display='none');
+  document.querySelectorAll('.dash-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+tab).style.display='block';
+  const tabs={bookings:0,miles:1,notifications:2,profile:3};
+  document.querySelectorAll('.dash-tab')[tabs[tab]]?.classList.add('active');
+}
+
+async function loadNotifications(){
+  try{
+    const r=await fetch(`${API}/notifications`,{headers:{'Authorization':`Bearer ${state.token}`}});
+    state.notifications=await r.json();
+  }catch(e){
+    state.notifications=[
+      {id:'1',title:'Welcome to SkyBook! 🎉',message:'You earned 500 bonus miles. Start exploring!',type:'success',read:false,created_at:new Date().toISOString()},
+      {id:'2',title:'Exclusive Deal: ISB→DXB',message:'Prices dropped to $129! Use code SUMMER30.',type:'info',read:false,created_at:new Date().toISOString()},
+    ];
+  }
+  const unread=state.notifications.filter(n=>!n.read).length;
+  const dot=document.getElementById('notif-dot');
+  const badge=document.getElementById('notif-count-badge');
+  if(dot){dot.className='notif-dot'+(unread>0?' show':'');}
+  if(badge){badge.textContent=unread>0?unread:'';}
+  const list=document.getElementById('notif-list');
+  if(list){
+    list.innerHTML=state.notifications.length?state.notifications.map(n=>`
+      <div class="notif-item ${n.read?'':'unread'}">
+        <div class="notif-icon">${n.type==='success'?'✅':n.type==='warning'?'⚠️':'ℹ️'}</div>
+        <div>
+          <div class="notif-title">${n.title}</div>
+          <div class="notif-msg">${n.message}</div>
+          <div class="notif-time">${formatDate(n.created_at)}</div>
+        </div>
+      </div>`).join(''):`<div class="empty-state"><div class="empty-icon">🔔</div><div>No notifications</div></div>`;
+  }
+}
+
+function openNotifications(){
+  if(state.user){showPage('dashboard-page');loadDashboard();switchDashTab('notifications');}
+  else openModal('login');
+}
+
+async function markAllRead(){
+  try{await fetch(`${API}/notifications/mark-read`,{method:'POST',headers:{'Authorization':`Bearer ${state.token}`}});}catch(e){}
+  state.notifications.forEach(n=>n.read=true);
+  loadNotifications();
+  showToast('All notifications marked as read','info');
+}
+
+async function saveProfile(){
+  const data={full_name:document.getElementById('p-name').value,phone:document.getElementById('p-phone').value,nationality:document.getElementById('p-nationality').value,passport:document.getElementById('p-passport').value,preferred_class:document.getElementById('p-class').value};
+  try{
+    const r=await fetch(`${API}/auth/update-profile`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':`Bearer ${state.token}`},body:JSON.stringify(data)});
+    const d=await r.json();
+    state.user={...state.user,...d.user};
+    localStorage.setItem('sb_user',JSON.stringify(state.user));
+  }catch(e){state.user={...state.user,...data};localStorage.setItem('sb_user',JSON.stringify(state.user));}
+  showToast('Profile saved successfully!','success');
+}
+
+// ── FEATURE MODALS ────────────────────────────────────────────────────────────
+const featureContent={
+  search:{title:'🔍 Real-Time Search',body:`<p style="color:var(--gray);line-height:1.7;margin-bottom:16px">Our proprietary AI engine scans 500+ airlines every 60 seconds to find you the absolute best fare. We compare direct airline prices, aggregators, and package deals simultaneously.</p><ul style="color:var(--gray);font-size:14px;line-height:2;padding-left:20px"><li>Price history graphs for every route</li><li>AI-powered "best time to book" predictor</li><li>Flexible date grid (±3 days)</li><li>Fare calendar view</li><li>Price drop notifications</li></ul>`},
+  payment:{title:'💳 Secure Payments',body:`<p style="color:var(--gray);line-height:1.7;margin-bottom:16px">Your financial security is our top priority. We use 256-bit SSL encryption and are PCI DSS Level 1 compliant.</p><ul style="color:var(--gray);font-size:14px;line-height:2;padding-left:20px"><li>Visa & Mastercard accepted</li><li>JazzCash mobile payments</li><li>EasyPaisa wallet</li><li>PayPal international</li><li>Bank transfer option</li><li>Promo codes & discounts</li><li>Installment plans available</li></ul>`},
+  ticket:{title:'🎫 Instant E-Ticket',body:`<p style="color:var(--gray);line-height:1.7;margin-bottom:16px">Your boarding pass arrives in your inbox within seconds of confirming your booking — no waiting, no hassle.</p><ul style="color:var(--gray);font-size:14px;line-height:2;padding-left:20px"><li>PDF boarding pass with QR code</li><li>Apple Wallet / Google Pay integration</li><li>Offline access on mobile</li><li>Resend ticket anytime</li><li>Multi-language support</li></ul>`},
+  loyalty:{title:'🏆 Loyalty Miles Program',body:`<p style="color:var(--gray);line-height:1.7;margin-bottom:16px">Earn 1.5 SkyMiles for every $1 spent and unlock exclusive benefits as you climb the tiers.</p><div style="display:grid;gap:10px;margin-top:14px"><div style="background:var(--sky2);padding:12px;border-radius:10px"><strong>🥈 Silver</strong> — 0–10,000 miles</div><div style="background:rgba(255,184,0,0.1);padding:12px;border-radius:10px;border:1px solid rgba(255,184,0,0.2)"><strong style="color:var(--gold)">🏅 Gold</strong> — 10,000–25,000 miles • Priority check-in</div><div style="background:rgba(124,58,237,0.1);padding:12px;border-radius:10px;border:1px solid rgba(124,58,237,0.2)"><strong style="color:#a78bfa">💎 Platinum</strong> — 25,000+ miles • Lounge access, upgrades</div></div>`},
+  cancel:{title:'🔄 Cancellation Policy',body:`<p style="color:var(--gray);line-height:1.7;margin-bottom:16px">We offer one of the most flexible cancellation policies in the industry.</p><ul style="color:var(--gray);font-size:14px;line-height:2;padding-left:20px"><li>Cancel within 24h: 100% refund</li><li>Cancel 7+ days before: 85% refund</li><li>Cancel 2–7 days before: 70% refund</li><li>Cancel within 48h: 50% refund</li><li>No-show: No refund</li></ul><p style="color:var(--gray);font-size:13px;margin-top:12px">Refundable tickets available for all routes. Travel insurance add-on covers additional scenarios.</p>`},
+  support:{title:'🎧 24/7 Customer Support',body:`<p style="color:var(--gray);line-height:1.7;margin-bottom:16px">Our dedicated support team is available round the clock to help you with any issue.</p><div style="display:flex;flex-direction:column;gap:10px"><div style="background:var(--sky2);padding:12px;border-radius:10px;display:flex;align-items:center;gap:10px"><span style="font-size:20px">💬</span><div><strong>Live Chat</strong><div style="font-size:13px;color:var(--gray)">Available 24/7 on web & app</div></div></div><div style="background:var(--sky2);padding:12px;border-radius:10px;display:flex;align-items:center;gap:10px"><span style="font-size:20px">📞</span><div><strong>Phone Support</strong><div style="font-size:13px;color:var(--gray)">+92 21 111-SKY-AIR (Urdu & English)</div></div></div><div style="background:var(--sky2);padding:12px;border-radius:10px;display:flex;align-items:center;gap:10px"><span style="font-size:20px">📧</span><div><strong>Email Support</strong><div style="font-size:13px;color:var(--gray)">support@skybook.app — 2hr response</div></div></div></div>`},
+  price:{title:'📉 Price Drop Alerts',body:`<p style="color:var(--gray);line-height:1.7;margin-bottom:16px">Set your target price for any route and our system monitors fares 24/7. The moment prices drop to your target, you'll be notified instantly.</p><ul style="color:var(--gray);font-size:14px;line-height:2;padding-left:20px"><li>Email & SMS notifications</li><li>Set alerts for multiple routes</li><li>Price history for past 90 days</li><li>Cheapest month calendar</li><li>Flexible date search (±7 days)</li></ul>`},
+  track:{title:'📡 Live Flight Tracking',body:`<p style="color:var(--gray);line-height:1.7;margin-bottom:16px">Track any flight in real-time with live updates on departure, arrival, gate information, and delays.</p><ul style="color:var(--gray);font-size:14px;line-height:2;padding-left:20px"><li>Live map tracking of aircraft</li><li>Gate & terminal updates</li><li>Delay notifications</li><li>Baggage carousel info</li><li>Arrival & departure boards</li><li>Weather at destination</li></ul>`}
+};
+function showFeatureModal(key){
+  const c=featureContent[key];
+  if(!c)return;
+  document.getElementById('feature-modal-title').textContent=c.title;
+  document.getElementById('feature-modal-body').innerHTML=c.body;
+  openModal('feature');
+}
+
+function showDeals(){
+  showPage('home');
+  setTimeout(()=>document.getElementById('deals-section')?.scrollIntoView({behavior:'smooth'}),200);
+}
+function showReviews(){showToast('Review section coming soon!','info')}
+function loadFlightsPage(){loadFlights('ISB','DXB',new Date().toISOString().split('T')[0],'ECONOMY');}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function formatDate(dt){
+  if(!dt)return '';
+  return new Date(dt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+function formatCard(el){let v=el.value.replace(/\D/g,'').slice(0,16);el.value=v.replace(/(.{4})/g,'$1 ').trim();}
+function formatExpiry(el){let v=el.value.replace(/\D/g,'').slice(0,4);if(v.length>=3)v=v.slice(0,2)+'/'+v.slice(2);el.value=v;}
+function downloadTicket(){showToast('PDF download starting... Check your downloads folder.','info')}
+function shareTicket(){
+  if(navigator.share){navigator.share({title:'My SkyBook Ticket',text:`My flight is confirmed! PNR: ${document.getElementById('t-pnr').textContent}`,url:'https://skybook.app'})}
+  else{showToast('Share link copied to clipboard!','info')}
+}
+
+// ── LOADING ───────────────────────────────────────────────────────────────────
+function showLoading(text='Loading...'){
+  document.getElementById('loading').classList.add('show');
+  document.getElementById('loading-text').textContent=text;
+}
+function hideLoading(){document.getElementById('loading').classList.remove('show')}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function showToast(msg,type='success'){
+  const icons={success:'✅',error:'❌',info:'ℹ️'};
+  const tc=document.getElementById('toast-container');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span class="toast-icon">${icons[type]||'✅'}</span><span class="toast-msg">${msg}</span>`;
+  tc.appendChild(t);
+  setTimeout(()=>t.classList.add('show'),10);
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},4000);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  // Set default dates
+  const today=new Date();
+  const next=new Date();next.setDate(today.getDate()+7);
+  const fmt=d=>d.toISOString().split('T')[0];
+  document.getElementById('s-date').value=fmt(next);
+  document.getElementById('s-return').value=fmt(new Date(next.getTime()+7*86400000));
+  document.getElementById('s2-date').value=fmt(next);
+
+  // Animate stats
+  setTimeout(()=>{
+    animateNum('stat-airlines',0,500);
+    animateNum('stat-dest',0,150);
+    animateNum('stat-travelers',0,89000);
+  },500);
+
+  // Simulated live price updates
+  setInterval(()=>{
+    const routes=['ISB→DXB','KHI→LHR','LHE→DOH','ISB→IST','KHI→DXB'];
+    const route=routes[Math.floor(Math.random()*routes.length)];
+    const price=100+Math.floor(Math.random()*900);
+    const ticker=document.getElementById('price-ticker');
+    // Occasional "price drop" live notification
+  },30000);
+});
+
+function animateNum(id,start,end){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const duration=1500;
+  const step=(end-start)/60;
+  let current=start;
+  const interval=setInterval(()=>{
+    current+=step;
+    if(current>=end){current=end;clearInterval(interval);}
+    const display=end>=1000?Math.round(current/1000)+'K+':Math.round(current)+'+';
+    el.innerHTML=display.includes('K')?display.replace('K+','<span>K+</span>'):display.replace('+','<span>+</span>');
+  },duration/60);
+}
+</script>
+</body>
+</html>
